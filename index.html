@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Abluft Wartung">
+<meta name="theme-color" content="#002060">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj48cmVjdCB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgcng9IjEwMCIgZmlsbD0iIzAwMjA2MCIvPjx0ZXh0IHg9IjI1NiIgeT0iMjEwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTMwIiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSJ3aGl0ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSI+QUJMPC90ZXh0Pjx0ZXh0IHg9IjI1NiIgeT0iMzIwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iNjgiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC44KSIgdGV4dC1hbmNob3I9Im1pZGRsZSI+V2FydHVuZzwvdGV4dD48dGV4dCB4PSIyNTYiIHk9IjQwMCIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjQ0IiBmaWxsPSJyZ2JhKDI1NSwyNTUsMjU1LDAuNSkiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkFpciBmb3IgQWxsPC90ZXh0Pjwvc3ZnPg==">
+<title>Wartungsprotokoll Ablüfter</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<style>
+:root{--brand:#002060;--bl:#E6EAF3;--blue:#185FA5;--or:#EF9F27;--orl:#FAEEDA;--red:#E24B4A;--rdl:#FCEBEB;--bdr:#E2E0D8;--bg:#F5F4EF;--bg2:#ECEAE3;--card:#fff;--tx:#1A1916;--tx2:#4D4A43;--tx3:#9B9A96;--r:12px;--rs:8px;--f:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",sans-serif}
+@media(prefers-color-scheme:dark){:root{--bg:#1C1C1E;--bg2:#2C2C2E;--card:#3A3A3C;--bdr:#48484A;--tx:#F2F2F7;--tx2:#AEAEB2;--tx3:#636366;--bl:#0A1A3D;--orl:#3D2A0D;--rdl:#3D0D0D}}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;height:100dvh;overflow:hidden}
+body{font-family:var(--f);background:var(--bg);color:var(--tx);display:flex;flex-direction:column;position:fixed;width:100%;top:0;left:0}
+#app{display:flex;flex-direction:column;height:100dvh;overflow:hidden}
+.topbar{background:var(--card);border-bottom:.5px solid var(--bdr);padding:10px 14px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.topbar-title{font-size:15px;font-weight:600;color:var(--tx)}.topbar-sub{font-size:11px;color:var(--tx2);margin-top:1px}
+.btn-pdf{padding:7px 13px;background:var(--brand);color:#fff;border:none;border-radius:var(--rs);font-size:13px;font-weight:500;cursor:pointer;font-family:var(--f)}
+.pbar{height:3px;background:var(--bdr);flex-shrink:0}
+.pfill{height:100%;background:var(--brand);transition:width .4s;width:11%}
+.tabs{display:flex;border-bottom:.5px solid var(--bdr);background:var(--card);padding:0 6px;overflow-x:auto;flex-shrink:0;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{padding:10px 11px;font-size:12px;color:var(--tx2);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;flex-shrink:0;user-select:none}
+.tab.active{color:var(--brand);border-bottom-color:var(--brand);font-weight:600}
+.scroll{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
+.content{padding:10px 14px;display:flex;flex-direction:column;gap:10px}
+.hidden{display:none!important}
+.card{background:var(--card);border:.5px solid var(--bdr);border-radius:var(--r);overflow:hidden}
+.sec-hdr{padding:9px 14px;display:flex;align-items:center;gap:8px;border-bottom:.5px solid var(--bdr);background:var(--bg2)}
+.sec-hdr i{font-size:15px;color:var(--brand)}.sec-title{font-size:13px;font-weight:500;color:var(--tx)}
+.skip-btn{margin-left:auto;padding:4px 10px;font-size:11px;border:.5px solid var(--bdr);border-radius:999px;background:var(--bg2);color:var(--tx2);cursor:pointer;font-family:var(--f)}
+.skip-btn.skipped{background:var(--orl);border-color:#FAC775;color:#854F0B}
+.skipped-overlay{padding:12px 14px;text-align:center;font-size:13px;color:var(--tx2);font-style:italic}
+.check-row{display:flex;align-items:center;padding:9px 14px;border-bottom:.5px solid var(--bdr);gap:8px}
+.clabel{font-size:13px;flex:1;color:var(--tx)}.csub{font-size:11px;color:var(--tx2);margin-top:2px}
+.togs{display:flex;gap:3px;flex-shrink:0}
+.tog{padding:5px 9px;font-size:11px;border-radius:var(--rs);border:.5px solid var(--bdr);background:var(--card);color:var(--tx2);cursor:pointer;font-family:var(--f);min-height:32px}
+.tog.ok{background:var(--bl);border-color:#3366AA;color:var(--brand);font-weight:500}
+.tog.warn{background:var(--orl);border-color:#FAC775;color:#854F0B;font-weight:500}
+.tog.fail{background:var(--rdl);border-color:#F09595;color:#A32D2D;font-weight:500}
+.tog.nv{background:var(--bg2);border-color:var(--bdr);color:var(--tx2);font-weight:500}
+.sdot{width:8px;height:8px;border-radius:50%;background:#D3D1C7;flex-shrink:0}
+.sdot.ok{background:var(--brand)}.sdot.warn{background:var(--or)}.sdot.fail{background:var(--red)}
+.extra-check{display:flex;align-items:center;gap:6px;padding:5px 14px 5px 32px;border-bottom:.5px solid var(--bdr)}
+.extra-check input[type=checkbox]{width:17px;height:17px;cursor:pointer;accent-color:var(--brand);flex-shrink:0}
+.extra-check label{font-size:12px;color:var(--tx);cursor:pointer}
+.comment-row{padding:6px 14px 10px;display:none;border-top:.5px solid var(--bdr)}
+.comment-row.vis{display:block}
+.comment-row>label{font-size:11px;color:var(--tx2);display:block;margin-bottom:4px}
+.comment-row>input{width:100%;padding:8px 10px;font-size:13px;border:.5px solid #FAC775;border-radius:var(--rs);background:var(--orl);color:var(--tx);font-family:var(--f)}
+.comment-row>input.fb{background:var(--rdl);border-color:#F09595}
+.photo-bar{display:flex;flex-wrap:wrap;gap:7px;margin-top:8px;align-items:flex-end}
+.photo-thumbs{display:flex;flex-wrap:wrap;gap:7px}
+.pthumb-wrap{position:relative}
+.pthumb{width:70px;height:70px;object-fit:cover;border-radius:var(--rs);border:.5px solid var(--bdr);cursor:pointer;display:block}
+.pdel{position:absolute;top:-6px;right:-6px;width:20px;height:20px;border-radius:50%;background:var(--red);color:#fff;border:none;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0}
+.photo-add-btn{width:70px;height:70px;border:1.5px dashed var(--bdr);border-radius:var(--rs);background:var(--bg2);color:var(--tx2);font-size:11px;cursor:pointer;font-family:var(--f);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;flex-shrink:0}
+.photo-add-btn input{display:none}.photo-add-btn i{font-size:22px;color:var(--brand);pointer-events:none}
+.lightbox{position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:500;display:flex;align-items:center;justify-content:center}
+.lightbox img{max-width:94vw;max-height:88vh;border-radius:var(--rs)}
+.lightbox-close{position:fixed;top:18px;right:18px;width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.2);color:#fff;border:none;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.measure-row{display:flex;align-items:center;padding:9px 14px;border-bottom:.5px solid var(--bdr);gap:8px}
+.measure-row:last-child{border-bottom:none}
+.measure-label{font-size:13px;flex:1;color:var(--tx)}.measure-label span{font-size:11px;color:var(--tx2);display:block;margin-top:1px}
+.minput{width:80px;padding:6px 8px;font-size:14px;border:.5px solid var(--bdr);border-radius:var(--rs);text-align:right;font-family:var(--f);background:var(--card);color:var(--tx)}
+.munit{font-size:12px;color:var(--tx2);min-width:30px}
+.full-input-row{padding:9px 14px;border-bottom:.5px solid var(--bdr)}
+.full-input-row label{font-size:11px;color:var(--tx2);display:block;margin-bottom:4px}
+.full-input-row input{width:100%;padding:7px 10px;font-size:13px;border:.5px solid var(--bdr);border-radius:var(--rs);background:var(--card);color:var(--tx);font-family:var(--f)}
+.hmeta{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:12px 14px}
+.mf{display:flex;flex-direction:column;gap:4px}.ml{font-size:11px;color:var(--tx2);text-transform:uppercase;letter-spacing:.04em}
+.mi{padding:7px 10px;font-size:13px;border:.5px solid var(--bdr);border-radius:var(--rs);background:var(--card);color:var(--tx);font-family:var(--f)}
+.filter-block{border-bottom:.5px solid var(--bdr);padding:11px 14px}.filter-block:last-child{border-bottom:none}
+.filter-block-header{font-size:12px;font-weight:600;color:var(--brand);margin-bottom:9px;display:flex;align-items:center;gap:6px}
+.filter-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:7px}
+.ff{display:flex;flex-direction:column;gap:4px}.ff label{font-size:11px;color:var(--tx2)}
+.ff input,.ff select{padding:6px 9px;font-size:13px;border:.5px solid var(--bdr);border-radius:var(--rs);background:var(--card);color:var(--tx);font-family:var(--f);width:100%;min-height:34px}
+.dp-row{display:flex;align-items:center;gap:8px;margin-top:6px}.dp-row label{font-size:12px;color:var(--tx2);flex:1}
+.dp-row input{width:72px;padding:5px 7px;font-size:13px;border:.5px solid var(--bdr);border-radius:var(--rs);text-align:right;font-family:var(--f);background:var(--card);color:var(--tx)}
+.dp-row span{font-size:11px;color:var(--tx2)}
+.filter-check-row{display:flex;align-items:center;gap:9px;margin-top:9px;padding-top:8px;border-top:.5px solid var(--bdr)}
+.filter-check-label{font-size:13px;flex:1;font-weight:500;color:var(--tx)}
+.filter-renewed{display:flex;align-items:center;gap:6px;padding:8px 0 2px;margin-top:6px;border-top:.5px solid var(--bdr)}
+.filter-renewed input[type=checkbox]{width:18px;height:18px;cursor:pointer;accent-color:var(--brand);flex-shrink:0}
+.filter-renewed label{font-size:13px;color:var(--tx);cursor:pointer}
+.cofields{padding:11px 14px;display:flex;flex-direction:column;gap:7px;border-top:.5px solid var(--bdr)}
+.cofields label{font-size:11px;color:var(--tx2);margin-bottom:2px;display:block}
+.cofields input{width:100%;padding:7px 9px;font-size:15px;font-weight:700;border:.5px solid var(--bdr);border-radius:var(--rs);background:var(--card);color:var(--tx);font-family:var(--f)}
+.tech-row{display:flex;align-items:center;gap:8px;padding:8px 14px;border-bottom:.5px solid var(--bdr)}.tech-row:last-child{border-bottom:none}
+.tech-num{font-size:11px;color:var(--tx2);min-width:24px}
+.tech-input{flex:1;padding:6px 9px;font-size:13px;border:.5px solid var(--bdr);border-radius:var(--rs);background:var(--card);color:var(--tx);font-family:var(--f)}
+.sum-grid{padding:12px 14px;display:flex;gap:10px}
+.sum-box{flex:1;background:var(--bg2);border-radius:var(--rs);padding:12px 8px;text-align:center}
+.sum-num{font-size:24px;font-weight:600}.sum-lbl{font-size:11px;color:var(--tx2);margin-top:2px}
+textarea{width:100%;padding:10px;font-size:14px;border:.5px solid var(--bdr);border-radius:var(--rs);font-family:var(--f);background:var(--card);color:var(--tx);resize:vertical;min-height:75px}
+.sig-wrap{padding:11px 14px}
+.sig-lrow{display:flex;align-items:center;justify-content:space-between;margin-bottom:7px}
+.sig-name{font-size:13px;font-weight:500;color:var(--tx)}
+.sig-btn{padding:5px 11px;font-size:12px;border:.5px solid var(--bdr);border-radius:var(--rs);background:var(--bg2);color:var(--tx2);cursor:pointer;font-family:var(--f)}
+.sig-btn.done{background:var(--bl);border-color:#3366AA;color:var(--brand);font-weight:500}
+.sig-canvas{width:100%;height:110px;border:1px dashed var(--bdr);border-radius:var(--rs);cursor:crosshair;touch-action:none;display:block;background:var(--bg)}
+.sig-canvas.signed{border-style:solid;border-color:#3366AA;background:var(--card)}
+.sig-hint{font-size:11px;color:var(--tx3);margin-top:4px;text-align:center}
+.fbar{background:var(--card);border-top:.5px solid var(--bdr);padding:11px 14px;display:flex;gap:8px;align-items:center;flex-shrink:0}
+.btn-back{padding:11px 14px;background:var(--bg2);color:var(--tx);border:.5px solid var(--bdr);border-radius:var(--rs);font-size:15px;cursor:pointer;font-family:var(--f);min-height:44px}
+.btn-next{flex:1;padding:11px;background:var(--brand);color:#fff;border:none;border-radius:var(--rs);font-size:15px;font-weight:500;cursor:pointer;font-family:var(--f);min-height:44px}
+.btn-pfoo{padding:11px 14px;background:var(--blue);color:#fff;border:none;border-radius:var(--rs);font-size:13px;font-weight:500;cursor:pointer;font-family:var(--f);min-height:44px}
+.toast{position:fixed;bottom:76px;left:50%;transform:translateX(-50%);background:#333;color:#fff;padding:7px 16px;border-radius:var(--rs);font-size:13px;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap;z-index:100}
+.toast.show{opacity:1}.tpl-status{font-size:12px;color:var(--brand);display:none;padding:8px 10px;background:var(--bl);border-radius:var(--rs);margin-top:4px}
+.pov{position:fixed;inset:0;background:var(--bg);z-index:50;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.ptopbar{background:var(--card);border-bottom:.5px solid var(--bdr);padding:11px 14px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}
+.ptopbar-title{font-size:15px;font-weight:500;color:var(--tx)}.ptopbar-sub{font-size:12px;color:var(--tx2);margin-top:2px}
+.btn-print{padding:8px 15px;background:var(--brand);color:#fff;border:none;border-radius:var(--rs);font-size:13px;font-weight:500;cursor:pointer;font-family:var(--f)}
+.btn-cpdf{padding:8px 12px;background:var(--bg2);color:var(--tx);border:.5px solid var(--bdr);border-radius:var(--rs);font-size:14px;cursor:pointer;font-family:var(--f)}
+.pdoc{background:#fff;border:.5px solid #ddd;border-radius:var(--r);overflow:hidden;font-family:Arial,sans-serif;font-size:11px;color:#222;line-height:1.5}
+.pco-hdr{display:flex;justify-content:space-between;align-items:center;background:#002060;padding:14px 18px;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.pco-logo{height:68px;max-width:260px;object-fit:contain}.pco-right{text-align:right}
+.pdoc-title{font-size:16px;font-weight:700;color:#fff;margin-bottom:2px}.pnorm{font-size:10px;color:rgba(255,255,255,.75)}
+.pco-info{font-size:10px;color:rgba(255,255,255,.85);line-height:1.7;margin-top:3px}
+.pbody{padding:16px 18px}
+.pparties{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.pparty{background:#f5f5f5;border-radius:4px;padding:7px 9px}
+.pparty-title{font-size:9px;color:#666;text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px}
+.pparty-val{font-size:12px;font-weight:600;color:#333;line-height:1.5}
+.pmeta{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+.pbox{background:#f5f5f5;border-radius:4px;padding:6px 8px}
+.pbox-k{font-size:9px;color:#666;text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px}.pbox-v{font-size:11px;font-weight:600;color:#222}
+.psec{font-size:10px;font-weight:700;color:#002060;text-transform:uppercase;letter-spacing:.06em;margin:12px 0 5px;border-bottom:.5px solid #ccc;padding-bottom:3px}
+.ptbl{width:100%;border-collapse:collapse;font-size:10px}
+.ptbl th{background:#EEF1F8;color:#002060;padding:4px 7px;text-align:left;font-size:9px;text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid #ddd;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.ptbl th:last-child{width:80px;text-align:center}
+.ptbl td{padding:4px 7px;border-bottom:.5px solid #eee;vertical-align:top}
+.ptbl td:last-child{width:80px;text-align:center;white-space:nowrap;vertical-align:middle}
+.ps{display:inline-block;padding:2px 6px;border-radius:10px;font-size:9px;font-weight:700}
+.ps.ok{background:#E6EAF3;color:#002060}.ps.warn{background:#FAEEDA;color:#854F0B}
+.ps.fail{background:#FCEBEB;color:#A32D2D}.ps.nd{background:#f0f0f0;color:#555}.ps.skip{background:#eee;color:#777}
+.pres{display:flex;gap:10px;margin-bottom:10px}
+.pres-box{flex:1;border-radius:4px;padding:6px;text-align:center;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.pres-num{font-size:18px;font-weight:700}.pres-lbl{font-size:9px}
+.psig-box{border:.5px solid #ddd;border-radius:4px;padding:8px;margin-top:10px}
+.psig-title{font-size:9px;color:#666;text-transform:uppercase;letter-spacing:.04em;margin-bottom:5px}
+.pfoot{margin-top:12px;border-top:.5px solid #eee;padding-top:6px;font-size:9px;color:#555;display:flex;justify-content:space-between}
+#printArea{display:none}
+@media print{
+  #app,#pov,#splash,.toast{display:none!important}
+  #printArea{display:block!important;font-family:Arial,sans-serif;font-size:11px;color:#222;line-height:1.5}
+  #printArea .pco-hdr{display:flex;justify-content:space-between;align-items:center;background:#002060!important;padding:14px 18px;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  #printArea .pco-logo{height:68px;max-width:260px;object-fit:contain}
+  #printArea .pco-right{text-align:right}
+  #printArea .pdoc-title{font-size:16px;font-weight:700;color:#fff}
+  #printArea .pnorm{font-size:10px;color:rgba(255,255,255,.75)}
+  #printArea .pco-info{font-size:10px;color:rgba(255,255,255,.85);line-height:1.7;margin-top:3px}
+  #printArea .pbody{padding:14px 18px}
+  #printArea .pparties{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+  #printArea .pparty{background:#f5f5f5!important;border-radius:4px;padding:7px 9px;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  #printArea .pparty-title{font-size:9px;color:#666;text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px}
+  #printArea .pparty-val{font-size:10px;color:#333;line-height:1.5}
+  #printArea .pmeta{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+  #printArea .pbox{background:#f5f5f5!important;border-radius:4px;padding:6px 8px;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  #printArea .pbox-k{font-size:9px;color:#666;text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px}
+  #printArea .pbox-v{font-size:11px;font-weight:600}
+  #printArea .psec{font-size:10px;font-weight:700;color:#002060;text-transform:uppercase;letter-spacing:.06em;margin:12px 0 5px;border-bottom:.5px solid #ccc;padding-bottom:3px}
+  #printArea .ptbl{width:100%;border-collapse:collapse;font-size:10px}
+  #printArea .ptbl th{background:#EEF1F8!important;color:#002060;padding:4px 7px;text-align:left;font-size:9px;text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid #ddd;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  #printArea .ptbl th:last-child{width:80px;text-align:center}
+  #printArea .ptbl td{padding:4px 7px;border-bottom:.5px solid #eee;vertical-align:top}
+  #printArea .ptbl td:last-child{width:80px;text-align:center;white-space:nowrap;vertical-align:middle}
+  #printArea .ps{display:inline-block;padding:2px 6px;border-radius:10px;font-size:9px;font-weight:700}
+  #printArea .ps.ok{background:#E6EAF3!important;color:#002060;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  #printArea .ps.warn{background:#FAEEDA!important;color:#854F0B;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  #printArea .ps.fail{background:#FCEBEB!important;color:#A32D2D;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  #printArea .ps.nd{background:#f0f0f0!important;color:#555}
+  #printArea .ps.skip{background:#eee!important;color:#777}
+  #printArea .pres{display:flex;gap:10px;margin-bottom:10px}
+  #printArea .pres-box{flex:1;border-radius:4px;padding:6px;text-align:center;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  #printArea .pres-num{font-size:18px;font-weight:700}
+  #printArea .pres-lbl{font-size:9px}
+  #printArea .psig-box{border:.5px solid #ddd;border-radius:4px;padding:8px;margin-top:10px}
+  #printArea .psig-title{font-size:9px;color:#666;text-transform:uppercase;letter-spacing:.04em;margin-bottom:5px}
+  #printArea .pfoot{margin-top:12px;border-top:.5px solid #eee;padding-top:6px;font-size:9px;color:#555;display:flex;justify-content:space-between}
+  @page{margin:10mm;size:A4}
+}
+</style><body>
+<div id="splash" style="position:fixed;inset:0;background:#002060;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;transition:opacity .5s">
+  <img src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyBpZD0iQVBMX0hDVSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB2ZXJzaW9uPSIxLjEiIHZpZXdCb3g9IjAgMCA3OTMuNyAxODQuMyI+CiAgPGRlZnM+CiAgICA8c3R5bGU+CiAgICAgIC5jbHMtMSB7CiAgICAgICAgZmlsbDogI2U3MzgzODsKICAgICAgfQoKICAgICAgLmNscy0xLCAuY2xzLTIgewogICAgICAgIHN0cm9rZS13aWR0aDogMHB4OwogICAgICB9CgogICAgICAuY2xzLTIgewogICAgICAgIGZpbGw6ICNmZmY7CiAgICAgIH0KICAgIDwvc3R5bGU+CiAgPC9kZWZzPgogIDxnPgogICAgPHBhdGggY2xhc3M9ImNscy0yIiBkPSJNMzU0LjMsMTcwLjhoLS4ybC0xMC45LTMwLjQtMTAuOSwzMC40aC0uMmwtMTUuOC00MS44aDQuN2wxMS4xLDMwLjUsMTEtMzAuNWguMmwxMSwzMC41LDExLjEtMzAuNWg0LjhsLTE1LjgsNDEuOFoiLz4KICAgIDxwYXRoIGNsYXNzPSJjbHMtMiIgZD0iTTQxNC40LDE0OS42YzAsMTIuMy04LjcsMjEuMy0yMC42LDIxLjNzLTIwLjUtOS0yMC41LTIxLjMsOC42LTIxLjMsMjAuNS0yMS4zLDIwLjYsOS4xLDIwLjYsMjEuM1pNMzc3LjYsMTQ5LjZjMCwxMCw2LjgsMTcuMywxNi4yLDE3LjNzMTYuMi03LjMsMTYuMi0xNy4zLTYuOC0xNy40LTE2LjItMTcuNC0xNi4yLDcuMy0xNi4yLDE3LjRaIi8+CiAgICA8cGF0aCBjbGFzcz0iY2xzLTIiIGQ9Ik00MjcuMSwxNjYuM2gyMC42djMuOWgtMjQuOXYtNDEuMmg0LjN2MzcuM1oiLz4KICAgIDxwYXRoIGNsYXNzPSJjbHMtMiIgZD0iTTQ3OC43LDEzMi45aC0xOS44djE1aDE2Ljl2My45aC0xNi45djE4LjNoLTQuM3YtNDEuMmgyNHY0WiIvPgogICAgPHBhdGggY2xhc3M9ImNscy0yIiBkPSJNNTA5LjgsMTMyLjloLTE5Ljh2MTVoMTYuOXYzLjloLTE2Ljl2MTguM2gtNC4zdi00MS4yaDI0djRaIi8+CiAgICA8cGF0aCBjbGFzcz0iY2xzLTIiIGQ9Ik01NDEuOCwxMzIuOWgtMjAuNnYxNC40aDE4LjJ2My45aC0xOC4ydjE1aDIxLjF2NGgtMjUuM3YtNDEuMmgyNC45djRaIi8+CiAgICA8cGF0aCBjbGFzcz0iY2xzLTIiIGQ9Ik01NzMuNywxNzAuMWwtMTAuMS0xNi4yYy0uNCwwLS44LDAtMS4yLDBoLTguMXYxNi4yaC00LjN2LTQxLjJoMTIuNGM4LjMsMCwxNC40LDQuNCwxNC40LDEyLjVzLTMuNSwxMC4xLTguOCwxMS43bDEwLjcsMTdoLTVaTTU3Mi41LDE0MS40YzAtNS43LTQuMS04LjctMTAuNS04LjdoLTcuOHYxNy4zaDcuOGM2LjQsMCwxMC41LTIuOSwxMC41LTguNloiLz4KICAgIDxwYXRoIGNsYXNzPSJjbHMtMiIgZD0iTTYxNS42LDEzMi44aC0xNXYzNy4zaC00LjN2LTM3LjNoLTE1di0zLjloMzQuMnYzLjlaIi8+CiAgICA8cGF0aCBjbGFzcz0iY2xzLTIiIGQ9Ik02NDYuOSwxMzIuN2wtMi4xLDMuNmMtMi45LTIuMy02LjgtNC4xLTExLjEtNC4xcy04LjgsMi4zLTguOCw3LjQsMi41LDUuOSw5LjksNy42YzkuNywyLjEsMTMuNiw1LjIsMTMuNiwxMS41cy01LjUsMTIuMi0xNC4yLDEyLjItMTAuOS0xLjktMTQuNi01LjJsMi40LTMuNWMzLDIuOSw3LjcsNC44LDEyLjMsNC44czkuOS0yLjcsOS45LTcuOS0zLjEtNi4zLTEwLjUtNy45Yy05LjctMi4xLTEyLjktNS4xLTEyLjktMTEuM3M1LjQtMTEuNiwxMy4xLTExLjYsOS45LDEuOSwxMy4yLDQuNFoiLz4KICA8L2c+CiAgPGc+CiAgICA8cGF0aCBjbGFzcz0iY2xzLTEiIGQ9Ik02NS43LDEyOWgtMTcuNXY0MS4xaDguM3YtMTIuN2g4LjNjOS45LDAsMTYuMy01LjYsMTYuMy0xNC4ycy02LTE0LjItMTUuNS0xNC4yTTY1LjEsMTUwLjNoLTguNnYtMTQuM2g4LjRjNS4xLDAsOC4yLDIuNyw4LjIsNy4xcy0zLjIsNy4yLTguMSw3LjJNODguNiwxNzBoMjkuNHYtNy41aC0yMXYtMzMuNmgtOC40djQxLjFaTTEyNS4yLDE3MGgzMS4zdi03LjVoLTIzdi05LjZoMTkuNXYtNy4zaC0xOS41di05LjRoMjIuN3YtNy40aC0zMXY0MS4xWk0xODQuMSwxNzAuOGMxMi4yLDAsMjEuNC05LjEsMjEuNC0yMS4zcy04LjktMjEuMy0yMS40LTIxLjMtMjEuNCw5LjEtMjEuNCwyMS4zLDguOSwyMS4zLDIxLjQsMjEuM00xODQuMSwxNjMuM2MtNy40LDAtMTMuMS02LTEzLjEtMTMuOXM1LjctMTMuOSwxMy4xLTEzLjksMTMuMSw2LDEzLjEsMTMuOS01LjYsMTMuOS0xMy4xLDEzLjkiLz4KICAgIDxwb2x5Z29uIGNsYXNzPSJjbHMtMSIgcG9pbnRzPSIyNDguMiAxNzAgMjQ5LjkgMTcwIDI0OS45IDEyOSAyNDEuNiAxMjkgMjQxLjYgMTUzLjMgMjE0LjUgMTI4LjcgMjEyLjcgMTI4LjcgMjEyLjcgMTcwIDIyMSAxNzAgMjIxIDE0NS42IDI0OC4yIDE3MCIvPgogICAgPHBhdGggY2xhc3M9ImNscy0xIiBkPSJNMjg4LjgsMTcwaDkuM2wtMjEtNDEuNGgtMS43bC0yMC44LDQxLjRoOS4ybDIuOS02LjNoMTkuMmwyLjksNi4zWk0yNzYuMSwxNDMuMWw2LjgsMTMuOGgtMTMuM2w2LjUtMTMuOFoiLz4KICAgIDxwYXRoIGNsYXNzPSJjbHMtMSIgZD0iTTM0LjIsMTcwaDkuM2wtMjEtNDEuNGgtMS43TDAsMTcwaDkuMmwyLjktNi4zaDE5LjJsMi45LDYuM1pNMjEuNiwxNDMuMWw2LjgsMTMuOGgtMTMuM2w2LjUtMTMuOFoiLz4KICA8L2c+CiAgPHBhdGggY2xhc3M9ImNscy0yIiBkPSJNMTAzLjIsODMuM1YxLjRoNi4xdjgxLjloLTYuMVoiLz4KICA8cGF0aCBjbGFzcz0iY2xzLTIiIGQ9Ik0xOTYuMyw4My4zbC0yNi4xLTMzLjloLTI2Ljh2MzMuOWgtNi4xVjEuNGgzNC40YzE3LjcsMCwyOS4zLDkuNiwyOS4zLDIzLjN2LjJjMCwxMy43LTEwLjIsMjEuNS0yNCwyMy40bDI3LDM1aC03LjdaTTE5NC45LDI0LjljMC0xMS04LjctMTcuOS0yMy41LTE3LjloLTI4djM2LjloMjcuNmMxMy43LDAsMjMuOS02LjksMjMuOS0xOC43di0uMloiLz4KICA8cGF0aCBjbGFzcz0iY2xzLTIiIGQ9Ik0yNjksN3YzMy42aDQ2LjN2NS42aC00Ni4zdjM3LjFoLTYuMVYxLjRoNTcuN3Y1LjZoLTUxLjZaIi8+CiAgPHBhdGggY2xhc3M9ImNscy0yIiBkPSJNMzc3LjcsODQuN2MtMjQuOCwwLTQxLjEtMTkuOC00MS4xLTQyLjF2LS4yQzMzNi42LDIwLDM1My4xLDAsMzc3LjksMHM0MS4xLDE5LjgsNDEuMSw0Mi4xcS4xLjEsMCwuMmMwLDIyLjMtMTYuNSw0Mi40LTQxLjMsNDIuNFpNNDEyLjcsNDIuNGMwLTIwLjItMTQuNy0zNi45LTM1LTM2LjlzLTM0LjgsMTYuNC0zNC44LDM2LjZ2LjJjMCwyMC4yLDE0LjcsMzYuOSwzNSwzNi45czM0LjgtMTYuNCwzNC44LTM2LjZ2LS4yWiIvPgogIDxwYXRoIGNsYXNzPSJjbHMtMiIgZD0iTTUwMS42LDgzLjNsLTI2LjEtMzMuOWgtMjYuOHYzMy45aC02LjFWMS40aDM0LjRjMTcuNywwLDI5LjMsOS42LDI5LjMsMjMuM3YuMmMwLDEzLjctMTAuMiwyMS41LTI0LDIzLjRsMjcsMzVoLTcuN1pNNTAwLjIsMjQuOWMwLTExLTguNy0xNy45LTIzLjUtMTcuOWgtMjh2MzYuOWgyNy42YzEzLjcsMCwyMy45LTYuOSwyMy45LTE4Ljd2LS4yWiIvPgogIDxwYXRoIGNsYXNzPSJjbHMtMiIgZD0iTTY2My41LDgzLjNWMS40aDYuMXY3Ni4zaDQ4LjF2NS42aC01NC4yWiIvPgogIDxwYXRoIGNsYXNzPSJjbHMtMiIgZD0iTTczOC44LDgzLjNWMS40aDYuMXY3Ni4zaDQ4LjF2NS42aC01NC4yWiIvPgogIDxwYXRoIGNsYXNzPSJjbHMtMiIgZD0iTTc1LjQsODMuNWwtMTEtMjIuOUgxNy40bC0xMS4xLDIyLjlIMEw0MC4xLDFoMS45bDQwLjEsODIuNWgtNi43Wk00MC45LDExLjNsLTIwLjksNDMuOGg0MS44TDQwLjksMTEuM1oiLz4KICA8cGF0aCBjbGFzcz0iY2xzLTIiIGQ9Ik02MzYuOSw4My41bC0xMS0yMi45aC00Ny4xbC0xMS4xLDIyLjloLTYuM0w2MDEuNSwxaDEuOWw0MC4xLDgyLjVoLTYuN1pNNjAyLjQsMTEuM2wtMjAuOSw0My44aDQxLjhsLTIwLjktNDMuOFoiLz4KPC9zdmc+" style="height:80px;max-width:260px;object-fit:contain" alt="Logo">
+  <div style="font-family:-apple-system,sans-serif;font-size:14px;color:rgba(255,255,255,.6);letter-spacing:.04em">Wartungsprotokoll Ablüfter</div>
+  <div style="width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.4);animation:pulse 1.2s ease-in-out infinite"></div>
+</div>
+<style>@keyframes pulse{0%,100%{opacity:.3;transform:scale(.8)}50%{opacity:1;transform:scale(1)}}</style>
+<div id="app">
+  <div class="topbar">
+    <div><div class="topbar-title">Wartungsprotokoll Ablüfter</div><div class="topbar-sub">ortsfeste Absauganlage</div></div>
+    <button class="btn-pdf" onclick="showPdf()">PDF ↗</button>
+  </div>
+  <div class="pbar"><div class="pfill" id="pfill"></div></div>
+  <div class="tabs">
+    <div class="tab active" onclick="showTab('firma',this)">Firma</div>
+    <div class="tab" onclick="showTab('kopf',this)">Stammdaten</div>
+    <div class="tab" onclick="showTab('pruefung',this)">Prüfung</div>
+    <div class="tab" onclick="showTab('abschluss',this)">Abschluss</div>
+    <div class="tab" onclick="showTab('sig',this)">Unterschrift</div>
+  </div>
+  <div class="scroll">
+    <div id="tab-firma" class="content">
+      <div class="card">
+        <div class="sec-hdr"><i class="ti ti-building-factory"></i><span class="sec-title">Firmenprofil</span></div>
+        <div style="background:#002060;padding:18px 20px"><img src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyBpZD0iQVBMX0hDVSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB2ZXJzaW9uPSIxLjEiIHZpZXdCb3g9IjAgMCA3OTMuNyAxODQuMyI+CiAgPGRlZnM+CiAgICA8c3R5bGU+CiAgICAgIC5jbHMtMSB7CiAgICAgICAgZmlsbDogI2U3MzgzODsKICAgICAgfQoKICAgICAgLmNscy0xLCAuY2xzLTIgewogICAgICAgIHN0cm9rZS13aWR0aDogMHB4OwogICAgICB9CgogICAgICAuY2xzLTIgewogICAgICAgIGZpbGw6ICNmZmY7CiAgICAgIH0KICAgIDwvc3R5bGU+CiAgPC9kZWZzPgogIDxnPgogICAgPHBhdGggY2xhc3M9ImNscy0yIiBkPSJNMzU0LjMsMTcwLjhoLS4ybC0xMC45LTMwLjQtMTAuOSwzMC40aC0uMmwtMTUuOC00MS44aDQuN2wxMS4xLDMwLjUsMTEtMzAuNWguMmwxMSwzMC41LDExLjEtMzAuNWg0LjhsLTE1LjgsNDEuOFoiLz4KICAgIDxwYXRoIGNsYXNzPSJjbHMtMiIgZD0iTTQxNC40LDE0OS42YzAsMTIuMy04LjcsMjEuMy0yMC42LDIxLjNzLTIwLjUtOS0yMC41LTIxLjMsOC42LTIxLjMsMjAuNS0yMS4zLDIwLjYsOS4xLDIwLjYsMjEuM1pNMzc3LjYsMTQ5LjZjMCwxMCw2LjgsMTcuMywxNi4yLDE3LjNzMTYuMi03LjMsMTYuMi0xNy4zLTYuOC0xNy40LTE2LjItMTcuNC0xNi4yLDcuMy0xNi4yLDE3LjRaIi8+CiAgICA8cGF0aCBjbGFzcz0iY2xzLTIiIGQ9Ik00MjcuMSwxNjYuM2gyMC42djMuOWgtMjQuOXYtNDEuMmg0LjN2MzcuM1oiLz4KICAgIDxwYXRoIGNsYXNzPSJjbHMtMiIgZD0iTTQ3OC43LDEzMi45aC0xOS44djE1aDE2Ljl2My45aC0xNi45djE4LjNoLTQuM3YtNDEuMmgyNHY0WiIvPgogICAgPHBhdGggY2xhc3M9ImNscy0yIiBkPSJNNTA5LjgsMTMyLjloLTE5Ljh2MTVoMTYuOXYzLjloLTE2Ljl2MTguM2gtNC4zdi00MS4yaDI0djRaIi8+CiAgICA8cGF0aCBjbGFzcz0iY2xzLTIiIGQ9Ik01NDEuOCwxMzIuOWgtMjAuNnYxNC40aDE4LjJ2My45aC0xOC4ydjE1aDIxLjF2NGgtMjUuM3YtNDEuMmgyNC45djRaIi8+CiAgICA8cGF0aCBjbGFzcz0iY2xzLTIiIGQ9Ik01NzMuNywxNzAuMWwtMTAuMS0xNi4yYy0uNCwwLS44LDAtMS4yLDBoLTguMXYxNi4yaC00LjN2LTQxLjJoMTIuNGM4LjMsMCwxNC40LDQuNCwxNC40LDEyLjVzLTMuNSwxMC4xLTguOCwxMS43bDEwLjcsMTdoLTVaTTU3Mi41LDE0MS40YzAtNS43LTQuMS04LjctMTAuNS04LjdoLTcuOHYxNy4zaDcuOGM2LjQsMCwxMC41LTIuOSwxMC41LTguNloiLz4KICAgIDxwYXRoIGNsYXNzPSJjbHMtMiIgZD0iTTYxNS42LDEzMi44aC0xNXYzNy4zaC00LjN2LTM3LjNoLTE1di0zLjloMzQuMnYzLjlaIi8+CiAgICA8cGF0aCBjbGFzcz0iY2xzLTIiIGQ9Ik02NDYuOSwxMzIuN2wtMi4xLDMuNmMtMi45LTIuMy02LjgtNC4xLTExLjEtNC4xcy04LjgsMi4zLTguOCw3LjQsMi41LDUuOSw5LjksNy42YzkuNywyLjEsMTMuNiw1LjIsMTMuNiwxMS41cy01LjUsMTIuMi0xNC4yLDEyLjItMTAuOS0xLjktMTQuNi01LjJsMi40LTMuNWMzLDIuOSw3LjcsNC44LDEyLjMsNC44czkuOS0yLjcsOS45LTcuOS0zLjEtNi4zLTEwLjUtNy45Yy05LjctMi4xLTEyLjktNS4xLTEyLjktMTEuM3M1LjQtMTEuNiwxMy4xLTExLjYsOS45LDEuOSwxMy4yLDQuNFoiLz4KICA8L2c+CiAgPGc+CiAgICA8cGF0aCBjbGFzcz0iY2xzLTEiIGQ9Ik02NS43LDEyOWgtMTcuNXY0MS4xaDguM3YtMTIuN2g4LjNjOS45LDAsMTYuMy01LjYsMTYuMy0xNC4ycy02LTE0LjItMTUuNS0xNC4yTTY1LjEsMTUwLjNoLTguNnYtMTQuM2g4LjRjNS4xLDAsOC4yLDIuNyw4LjIsNy4xcy0zLjIsNy4yLTguMSw3LjJNODguNiwxNzBoMjkuNHYtNy41aC0yMXYtMzMuNmgtOC40djQxLjFaTTEyNS4yLDE3MGgzMS4zdi03LjVoLTIzdi05LjZoMTkuNXYtNy4zaC0xOS41di05LjRoMjIuN3YtNy40aC0zMXY0MS4xWk0xODQuMSwxNzAuOGMxMi4yLDAsMjEuNC05LjEsMjEuNC0yMS4zcy04LjktMjEuMy0yMS40LTIxLjMtMjEuNCw5LjEtMjEuNCwyMS4zLDguOSwyMS4zLDIxLjQsMjEuM00xODQuMSwxNjMuM2MtNy40LDAtMTMuMS02LTEzLjEtMTMuOXM1LjctMTMuOSwxMy4xLTEzLjksMTMuMSw2LDEzLjEsMTMuOS01LjYsMTMuOS0xMy4xLDEzLjkiLz4KICAgIDxwb2x5Z29uIGNsYXNzPSJjbHMtMSIgcG9pbnRzPSIyNDguMiAxNzAgMjQ5LjkgMTcwIDI0OS45IDEyOSAyNDEuNiAxMjkgMjQxLjYgMTUzLjMgMjE0LjUgMTI4LjcgMjEyLjcgMTI4LjcgMjEyLjcgMTcwIDIyMSAxNzAgMjIxIDE0NS42IDI0OC4yIDE3MCIvPgogICAgPHBhdGggY2xhc3M9ImNscy0xIiBkPSJNMjg4LjgsMTcwaDkuM2wtMjEtNDEuNGgtMS43bC0yMC44LDQxLjRoOS4ybDIuOS02LjNoMTkuMmwyLjksNi4zWk0yNzYuMSwxNDMuMWw2LjgsMTMuOGgtMTMuM2w2LjUtMTMuOFoiLz4KICAgIDxwYXRoIGNsYXNzPSJjbHMtMSIgZD0iTTM0LjIsMTcwaDkuM2wtMjEtNDEuNGgtMS43TDAsMTcwaDkuMmwyLjktNi4zaDE5LjJsMi45LDYuM1pNMjEuNiwxNDMuMWw2LjgsMTMuOGgtMTMuM2w2LjUtMTMuOFoiLz4KICA8L2c+CiAgPHBhdGggY2xhc3M9ImNscy0yIiBkPSJNMTAzLjIsODMuM1YxLjRoNi4xdjgxLjloLTYuMVoiLz4KICA8cGF0aCBjbGFzcz0iY2xzLTIiIGQ9Ik0xOTYuMyw4My4zbC0yNi4xLTMzLjloLTI2Ljh2MzMuOWgtNi4xVjEuNGgzNC40YzE3LjcsMCwyOS4zLDkuNiwyOS4zLDIzLjN2LjJjMCwxMy43LTEwLjIsMjEuNS0yNCwyMy40bDI3LDM1aC03LjdaTTE5NC45LDI0LjljMC0xMS04LjctMTcuOS0yMy41LTE3LjloLTI4djM2LjloMjcuNmMxMy43LDAsMjMuOS02LjksMjMuOS0xOC43di0uMloiLz4KICA8cGF0aCBjbGFzcz0iY2xzLTIiIGQ9Ik0yNjksN3YzMy42aDQ2LjN2NS42aC00Ni4zdjM3LjFoLTYuMVYxLjRoNTcuN3Y1LjZoLTUxLjZaIi8+CiAgPHBhdGggY2xhc3M9ImNscy0yIiBkPSJNMzc3LjcsODQuN2MtMjQuOCwwLTQxLjEtMTkuOC00MS4xLTQyLjF2LS4yQzMzNi42LDIwLDM1My4xLDAsMzc3LjksMHM0MS4xLDE5LjgsNDEuMSw0Mi4xcS4xLjEsMCwuMmMwLDIyLjMtMTYuNSw0Mi40LTQxLjMsNDIuNFpNNDEyLjcsNDIuNGMwLTIwLjItMTQuNy0zNi45LTM1LTM2LjlzLTM0LjgsMTYuNC0zNC44LDM2LjZ2LjJjMCwyMC4yLDE0LjcsMzYuOSwzNSwzNi45czM0LjgtMTYuNCwzNC44LTM2LjZ2LS4yWiIvPgogIDxwYXRoIGNsYXNzPSJjbHMtMiIgZD0iTTUwMS42LDgzLjNsLTI2LjEtMzMuOWgtMjYuOHYzMy45aC02LjFWMS40aDM0LjRjMTcuNywwLDI5LjMsOS42LDI5LjMsMjMuM3YuMmMwLDEzLjctMTAuMiwyMS41LTI0LDIzLjRsMjcsMzVoLTcuN1pNNTAwLjIsMjQuOWMwLTExLTguNy0xNy45LTIzLjUtMTcuOWgtMjh2MzYuOWgyNy42YzEzLjcsMCwyMy45LTYuOSwyMy45LTE4Ljd2LS4yWiIvPgogIDxwYXRoIGNsYXNzPSJjbHMtMiIgZD0iTTY2My41LDgzLjNWMS40aDYuMXY3Ni4zaDQ4LjF2NS42aC01NC4yWiIvPgogIDxwYXRoIGNsYXNzPSJjbHMtMiIgZD0iTTczOC44LDgzLjNWMS40aDYuMXY3Ni4zaDQ4LjF2NS42aC01NC4yWiIvPgogIDxwYXRoIGNsYXNzPSJjbHMtMiIgZD0iTTc1LjQsODMuNWwtMTEtMjIuOUgxNy40bC0xMS4xLDIyLjlIMEw0MC4xLDFoMS45bDQwLjEsODIuNWgtNi43Wk00MC45LDExLjNsLTIwLjksNDMuOGg0MS44TDQwLjksMTEuM1oiLz4KICA8cGF0aCBjbGFzcz0iY2xzLTIiIGQ9Ik02MzYuOSw4My41bC0xMS0yMi45aC00Ny4xbC0xMS4xLDIyLjloLTYuM0w2MDEuNSwxaDEuOWw0MC4xLDgyLjVoLTYuN1pNNjAyLjQsMTEuM2wtMjAuOSw0My44aDQxLjhsLTIwLjktNDMuOFoiLz4KPC9zdmc+" style="height:68px;max-width:260px;object-fit:contain" alt="Air for All"></div>
+        <div style="padding:12px 14px">
+          <div style="font-size:14px;font-weight:600;color:var(--tx)">Air for All GmbH</div>
+          <div style="font-size:12px;color:var(--tx2);margin-top:4px;line-height:1.7">Benzstr. 1 · 70839 Gerlingen<br>Tel. 07156 17809-287<br>info.airforall@apleona.com</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="sec-hdr"><i class="ti ti-database"></i><span class="sec-title">Anlagendaten übernehmen</span></div>
+        <div style="padding:12px 14px;display:flex;flex-direction:column;gap:10px">
+          <div style="font-size:13px;color:var(--tx2);line-height:1.6">Stammdaten aus einem früheren Protokoll laden – Prüfergebnisse bleiben leer.</div>
+          <button onclick="saveTemplate()" style="padding:11px;background:var(--brand);color:#fff;border:none;border-radius:var(--rs);font-size:14px;font-weight:500;cursor:pointer;font-family:var(--f)">💾 Anlagendaten speichern</button>
+          <label style="display:block;padding:11px;background:var(--bg2);color:var(--tx);border:.5px solid var(--bdr);border-radius:var(--rs);font-size:14px;font-weight:500;cursor:pointer;font-family:var(--f);text-align:center">📂 Anlagendaten laden …<input type="file" accept=".json" style="display:none" onchange="loadTemplate(this)"></label>
+          <div class="tpl-status" id="tplStatus"></div>
+        </div>
+      </div>
+    </div>
+    <div id="tab-kopf" class="content hidden">
+      <div class="card">
+        <div class="sec-hdr"><i class="ti ti-clipboard-list"></i><span class="sec-title">Auftrag</span></div>
+        <div class="hmeta">
+          <div class="mf"><label class="ml">Anlage</label><input class="mi" id="f-anlage" placeholder="z.B. Ventilatorbox 400 MD.43 Ex" oninput="autosave()"></div>
+          <div class="mf"><label class="ml">Auftrags-Nr.</label><input class="mi" id="f-auftragsNr" placeholder="z.B. 26-0328" oninput="autosave()"></div>
+          <div class="mf"><label class="ml">Datum</label><input class="mi" id="f-datum" type="text" placeholder="TT.MM.JJJJ" oninput="autosave()"></div>
+          <div class="mf"><label class="ml">Wartungsintervall</label><select class="mi" id="f-intervall" onchange="autosave()"><option>Halbjährlich</option><option selected>Jährlich</option><option>Quartalsweise</option></select></div>
+          <div class="mf"><label class="ml">Ansprechperson</label><input class="mi" id="f-ansprechperson" placeholder="Name vor Ort" oninput="autosave()"></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="sec-hdr"><i class="ti ti-home"></i><span class="sec-title">Betreiber</span></div>
+        <div class="cofields">
+          <div><label>Name / Firma</label><input id="bh-name" placeholder="Betreiber GmbH" oninput="autosave()"></div>
+          <div><label>Straße &amp; Hausnummer</label><input id="bh-street" placeholder="Musterstraße 10" oninput="autosave()"></div>
+          <div><label>PLZ &amp; Ort</label><input id="bh-city" placeholder="12345 Musterstadt" oninput="autosave()"></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="sec-hdr"><i class="ti ti-map-pin"></i><span class="sec-title">Objekt / Anlage</span></div>
+        <div class="cofields">
+          <div><label>Objektname</label><input id="obj-name" placeholder="z.B. Werk 2" oninput="autosave()"></div>
+          <div><label>Straße &amp; Hausnummer</label><input id="obj-street" placeholder="Objektstraße 5" oninput="autosave()"></div>
+          <div><label>PLZ &amp; Ort</label><input id="obj-city" placeholder="54321 Objektstadt" oninput="autosave()"></div>
+          <div><label>Standort / Aufstellraum</label><input id="f-standort" placeholder="z.B. Werk 2 B41, 2.OG" oninput="autosave()"></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="sec-hdr"><i class="ti ti-id"></i><span class="sec-title">Geräte- / Typdaten</span></div>
+        <div class="hmeta">
+          <div class="mf"><label class="ml">Hersteller</label><input class="mi" id="f-hersteller" placeholder="z.B. Ziehl-Abegg" oninput="autosave()"></div>
+          <div class="mf"><label class="ml">Typenbezeichnung</label><input class="mi" id="f-typbez" placeholder="z.B. 400" oninput="autosave()"></div>
+          <div class="mf"><label class="ml">Geräteart</label><input class="mi" id="f-geraeteart" placeholder="z.B. Ventilatorbox" oninput="autosave()"></div>
+          <div class="mf"><label class="ml">Strom</label><div style="display:flex;align-items:center;gap:5px"><input class="mi" id="f-strom" placeholder="—" inputmode="decimal" oninput="autosave()" style="flex:1"><span style="font-size:12px;color:var(--tx2)">A</span></div></div>
+          <div class="mf"><label class="ml">Spannung / Frequenz</label><input class="mi" id="f-spannung" placeholder="z.B. 3~ 400 V/50 Hz" oninput="autosave()"></div>
+          <div class="mf"><label class="ml">Leistung</label><div style="display:flex;align-items:center;gap:5px"><input class="mi" id="f-leistung" placeholder="—" inputmode="decimal" oninput="autosave()" style="flex:1"><span style="font-size:12px;color:var(--tx2)">kW</span></div></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="sec-hdr"><i class="ti ti-camera"></i><span class="sec-title">Anlagenfoto</span></div>
+        <div style="padding:12px 14px">
+          <div id="anlagenfoto-preview" class="hidden" style="margin-bottom:10px;position:relative;display:inline-block">
+            <img id="anlagenfoto-img" src="" style="width:160px;height:160px;object-fit:cover;border-radius:var(--rs);border:.5px solid var(--bdr);display:block">
+            <button onclick="removeAnlagenfoto()" style="position:absolute;top:-7px;right:-7px;width:24px;height:24px;border-radius:50%;background:var(--red);color:#fff;border:none;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0">✕</button>
+          </div>
+          <label class="photo-add-btn" style="width:160px;height:160px" id="anlagenfoto-addbtn"><input type="file" accept="image/*" onchange="handleAnlagenfoto(this)"><i class="ti ti-camera" style="font-size:26px"></i><span>Foto hinzufügen</span></label>
+        </div>
+      </div>
+      <div class="card">
+        <div class="sec-hdr"><i class="ti ti-users"></i><span class="sec-title">Service-Techniker</span></div>
+        <div class="tech-row"><span class="tech-num">1</span><input class="tech-input" id="tech1" placeholder="Name Techniker 1" oninput="autosave()"></div>
+        <div class="tech-row"><span class="tech-num">2</span><input class="tech-input" id="tech2" placeholder="Name Techniker 2" oninput="autosave()"></div>
+        <div class="tech-row"><span class="tech-num">3</span><input class="tech-input" id="tech3" placeholder="Name Techniker 3" oninput="autosave()"></div>
+        <div class="tech-row"><span class="tech-num">4</span><input class="tech-input" id="tech4" placeholder="Name Techniker 4" oninput="autosave()"></div>
+      </div>
+    </div>
+    <div id="tab-pruefung" class="content hidden">
+      <div class="card">
+        <div class="sec-hdr"><i class="ti ti-clipboard-check"></i><span class="sec-title">Prüfpunkte ortsfeste Absauganlage</span></div>
+<div class="check-row"><div class="sdot" id="d-rohr"></div><div style="flex:1"><div class="clabel">Rohrleitungen</div><div class="csub">Erfassungseinrichtungen, Prallbleche/Gehäusewände, Rohrverbindungen auf Verschmutzung und Beschädigung; Rohrleitungen, Schieber, Klappen, Abzweigungen und Vorabscheider auf Dichtheit, Ablagerungen, Befestigungen und Funktion prüfen</div></div><div class="togs"><button class="tog" onclick="setCheck(this,'d-rohr','rohr','ok')">i.O.</button><button class="tog" onclick="setCheck(this,'d-rohr','rohr','warn')">n.i.O.</button><button class="tog" onclick="setCheck(this,'d-rohr','rohr','nv')">n.v.</button></div></div><div class="comment-row" id="comment-rohr"><label>Bemerkung</label><input placeholder="Mangel / Defekt beschreiben..." oninput="autosave()"><div class="photo-bar"><div class="photo-thumbs" id="photos-rohr"></div><label class="photo-add-btn"><input type="file" accept="image/*" onchange="handlePhoto(this,'rohr')"><i class="ti ti-camera"></i><span>Foto</span></label></div></div><div class="check-row"><div class="sdot" id="d-absch"></div><div style="flex:1"><div class="clabel">Abscheider</div><div class="csub">Gehäuse und Inspektionsöffnungen auf Dichtheit, Ablagerungen, Anhaftungen und Befestigung prüfen</div></div><div class="togs"><button class="tog" onclick="setCheck(this,'d-absch','absch','ok')">i.O.</button><button class="tog" onclick="setCheck(this,'d-absch','absch','warn')">n.i.O.</button><button class="tog" onclick="setCheck(this,'d-absch','absch','nv')">n.v.</button></div></div><div class="comment-row" id="comment-absch"><label>Bemerkung</label><input placeholder="Mangel / Defekt beschreiben..." oninput="autosave()"><div class="photo-bar"><div class="photo-thumbs" id="photos-absch"></div><label class="photo-add-btn"><input type="file" accept="image/*" onchange="handlePhoto(this,'absch')"><i class="ti ti-camera"></i><span>Foto</span></label></div></div><div class="check-row"><div class="sdot" id="d-vent"></div><div style="flex:1"><div class="clabel">Ventilator</div><div class="csub">Gehäuse, Laufrad und Motor auf Verschmutzung sowie auf Laufruhe prüfen</div></div><div class="togs"><button class="tog" onclick="setCheck(this,'d-vent','vent','ok')">i.O.</button><button class="tog" onclick="setCheck(this,'d-vent','vent','warn')">n.i.O.</button><button class="tog" onclick="setCheck(this,'d-vent','vent','nv')">n.v.</button></div></div><div class="comment-row" id="comment-vent"><label>Bemerkung</label><input placeholder="Mangel / Defekt beschreiben..." oninput="autosave()"><div class="photo-bar"><div class="photo-thumbs" id="photos-vent"></div><label class="photo-add-btn"><input type="file" accept="image/*" onchange="handlePhoto(this,'vent')"><i class="ti ti-camera"></i><span>Foto</span></label></div></div><div class="check-row"><div class="sdot" id="d-vbef"></div><div style="flex:1"><div class="clabel">Befestigungen</div><div class="csub">Schrauben, Flansche, Halterungen</div></div><div class="togs"><button class="tog" onclick="setCheck(this,'d-vbef','vbef','ok')">i.O.</button><button class="tog" onclick="setCheck(this,'d-vbef','vbef','warn')">n.i.O.</button><button class="tog" onclick="setCheck(this,'d-vbef','vbef','nv')">n.v.</button></div></div><div class="comment-row" id="comment-vbef"><label>Bemerkung</label><input placeholder="Mangel / Defekt beschreiben..." oninput="autosave()"><div class="photo-bar"><div class="photo-thumbs" id="photos-vbef"></div><label class="photo-add-btn"><input type="file" accept="image/*" onchange="handlePhoto(this,'vbef')"><i class="ti ti-camera"></i><span>Foto</span></label></div></div><div class="check-row"><div class="sdot" id="d-vlag"></div><div style="flex:1"><div class="clabel">Lager &amp; Geräusche</div><div class="csub">Laufgeräusch, Temperatur, Vibration</div></div><div class="togs"><button class="tog" onclick="setCheck(this,'d-vlag','vlag','ok')">i.O.</button><button class="tog" onclick="setCheck(this,'d-vlag','vlag','warn')">n.i.O.</button><button class="tog" onclick="setCheck(this,'d-vlag','vlag','nv')">n.v.</button></div></div><div class="comment-row" id="comment-vlag"><label>Bemerkung</label><input placeholder="Mangel / Defekt beschreiben..." oninput="autosave()"><div class="photo-bar"><div class="photo-thumbs" id="photos-vlag"></div><label class="photo-add-btn"><input type="file" accept="image/*" onchange="handlePhoto(this,'vlag')"><i class="ti ti-camera"></i><span>Foto</span></label></div></div><div class="check-row"><div class="sdot" id="d-vmot"></div><div style="flex:1"><div class="clabel">E-Motor</div><div class="csub">Temperatur, Geräusche, Anschlüsse</div></div><div class="togs"><button class="tog" onclick="setCheck(this,'d-vmot','vmot','ok')">i.O.</button><button class="tog" onclick="setCheck(this,'d-vmot','vmot','warn')">n.i.O.</button><button class="tog" onclick="setCheck(this,'d-vmot','vmot','nv')">n.v.</button></div></div><div class="comment-row" id="comment-vmot"><label>Bemerkung</label><input placeholder="Mangel / Defekt beschreiben..." oninput="autosave()"><div class="photo-bar"><div class="photo-thumbs" id="photos-vmot"></div><label class="photo-add-btn"><input type="file" accept="image/*" onchange="handlePhoto(this,'vmot')"><i class="ti ti-camera"></i><span>Foto</span></label></div></div><div class="full-input-row"><label>E-Motortyp / Fabrikat</label><input id="vmot-typ" placeholder="z.B. Ziehl-Abegg ERA63E" oninput="autosave()"></div><div class="check-row"><div class="sdot" id="d-vschwing"></div><div style="flex:1"><div class="clabel">Schwingungsdämpfer</div><div class="csub">Zustand, Risse, Verformung</div></div><div class="togs"><button class="tog" onclick="setCheck(this,'d-vschwing','vschwing','ok')">i.O.</button><button class="tog" onclick="setCheck(this,'d-vschwing','vschwing','warn')">n.i.O.</button><button class="tog" onclick="setCheck(this,'d-vschwing','vschwing','nv')">n.v.</button></div></div><div class="comment-row" id="comment-vschwing"><label>Bemerkung</label><input placeholder="Mangel / Defekt beschreiben..." oninput="autosave()"><div class="photo-bar"><div class="photo-thumbs" id="photos-vschwing"></div><label class="photo-add-btn"><input type="file" accept="image/*" onchange="handlePhoto(this,'vschwing')"><i class="ti ti-camera"></i><span>Foto</span></label></div></div><div class="check-row"><div class="sdot" id="d-filt"></div><div style="flex:1"><div class="clabel">Filterelemente</div><div class="csub">Filterelemente auf Beschädigung, Anhaftungen und Dichtheit prüfen</div></div><div class="togs"><button class="tog" onclick="setCheck(this,'d-filt','filt','ok')">i.O.</button><button class="tog" onclick="setCheck(this,'d-filt','filt','warn')">n.i.O.</button><button class="tog" onclick="setCheck(this,'d-filt','filt','nv')">n.v.</button></div></div><div class="comment-row" id="comment-filt"><label>Bemerkung</label><input placeholder="Mangel / Defekt beschreiben..." oninput="autosave()"><div class="photo-bar"><div class="photo-thumbs" id="photos-filt"></div><label class="photo-add-btn"><input type="file" accept="image/*" onchange="handlePhoto(this,'filt')"><i class="ti ti-camera"></i><span>Foto</span></label></div></div><div class="check-row"><div class="sdot" id="d-abk1"></div><div style="flex:1"><div class="clabel">Abluftklappe – Mechanismus &amp; Dichtheit</div><div class="csub">Funktion, Anschläge, Leckage</div></div><div class="togs"><button class="tog" onclick="setCheck(this,'d-abk1','abk1','ok')">i.O.</button><button class="tog" onclick="setCheck(this,'d-abk1','abk1','warn')">n.i.O.</button><button class="tog" onclick="setCheck(this,'d-abk1','abk1','nv')">n.v.</button></div></div><div class="comment-row" id="comment-abk1"><label>Bemerkung</label><input placeholder="Mangel / Defekt beschreiben..." oninput="autosave()"><div class="photo-bar"><div class="photo-thumbs" id="photos-abk1"></div><label class="photo-add-btn"><input type="file" accept="image/*" onchange="handlePhoto(this,'abk1')"><i class="ti ti-camera"></i><span>Foto</span></label></div></div><div class="check-row"><div class="sdot" id="d-abk2"></div><div style="flex:1"><div class="clabel">Abluftklappe – Stellantrieb</div><div class="csub">Funktion, Anschlüsse, Stellweg</div></div><div class="togs"><button class="tog" onclick="setCheck(this,'d-abk2','abk2','ok')">i.O.</button><button class="tog" onclick="setCheck(this,'d-abk2','abk2','warn')">n.i.O.</button><button class="tog" onclick="setCheck(this,'d-abk2','abk2','nv')">n.v.</button></div></div><div class="comment-row" id="comment-abk2"><label>Bemerkung</label><input placeholder="Mangel / Defekt beschreiben..." oninput="autosave()"><div class="photo-bar"><div class="photo-thumbs" id="photos-abk2"></div><label class="photo-add-btn"><input type="file" accept="image/*" onchange="handlePhoto(this,'abk2')"><i class="ti ti-camera"></i><span>Foto</span></label></div></div><div class="full-input-row"><label>Stellantriebtyp / Fabrikat</label><input id="abk2-typ" placeholder="z.B. Belimo LM230A" oninput="autosave()"></div><div class="check-row"><div class="sdot" id="d-rsk"></div><div style="flex:1"><div class="clabel">Rückschlagklappe</div><div class="csub">Funktion, Leichtgängigkeit, Dichtheit</div></div><div class="togs"><button class="tog" onclick="setCheck(this,'d-rsk','rsk','ok')">i.O.</button><button class="tog" onclick="setCheck(this,'d-rsk','rsk','warn')">n.i.O.</button><button class="tog" onclick="setCheck(this,'d-rsk','rsk','nv')">n.v.</button></div></div><div class="comment-row" id="comment-rsk"><label>Bemerkung</label><input placeholder="Mangel / Defekt beschreiben..." oninput="autosave()"><div class="photo-bar"><div class="photo-thumbs" id="photos-rsk"></div><label class="photo-add-btn"><input type="file" accept="image/*" onchange="handlePhoto(this,'rsk')"><i class="ti ti-camera"></i><span>Foto</span></label></div></div><div class="check-row"><div class="sdot" id="d-steu"></div><div style="flex:1"><div class="clabel">Steuerung / Regelung</div><div class="csub">Einstellwerte von Differenzdruckmesser, Füllstandswächter und Strömungsüberwachung etc. prüfen</div></div><div class="togs"><button class="tog" onclick="setCheck(this,'d-steu','steu','ok')">i.O.</button><button class="tog" onclick="setCheck(this,'d-steu','steu','warn')">n.i.O.</button><button class="tog" onclick="setCheck(this,'d-steu','steu','nv')">n.v.</button></div></div><div class="comment-row" id="comment-steu"><label>Bemerkung</label><input placeholder="Mangel / Defekt beschreiben..." oninput="autosave()"><div class="photo-bar"><div class="photo-thumbs" id="photos-steu"></div><label class="photo-add-btn"><input type="file" accept="image/*" onchange="handlePhoto(this,'steu')"><i class="ti ti-camera"></i><span>Foto</span></label></div></div><div class="full-input-row"><label>Ort der Steuerung</label><input id="steu-ort" placeholder="z.B. Schaltschrank Technikraum 2.OG" oninput="autosave()"></div><div class="check-row"><div class="sdot" id="d-schk"></div><div style="flex:1"><div class="clabel">Schaltschrank</div><div class="csub">Türdichtungen, mechanische Beschädigungen, Kontrolllampen und Verriegelungen auf Funktion prüfen, Stromaufnahme messen</div></div><div class="togs"><button class="tog" onclick="setCheck(this,'d-schk','schk','ok')">i.O.</button><button class="tog" onclick="setCheck(this,'d-schk','schk','warn')">n.i.O.</button><button class="tog" onclick="setCheck(this,'d-schk','schk','nv')">n.v.</button></div></div><div class="comment-row" id="comment-schk"><label>Bemerkung</label><input placeholder="Mangel / Defekt beschreiben..." oninput="autosave()"><div class="photo-bar"><div class="photo-thumbs" id="photos-schk"></div><label class="photo-add-btn"><input type="file" accept="image/*" onchange="handlePhoto(this,'schk')"><i class="ti ti-camera"></i><span>Foto</span></label></div></div><div class="check-row"><div class="sdot" id="d-rep"></div><div style="flex:1"><div class="clabel">Reparaturschalter</div><div class="csub">Funktion, Zugänglichkeit, Beschriftung prüfen</div></div><div class="togs"><button class="tog" onclick="setCheck(this,'d-rep','rep','ok')">i.O.</button><button class="tog" onclick="setCheck(this,'d-rep','rep','warn')">n.i.O.</button><button class="tog" onclick="setCheck(this,'d-rep','rep','nv')">n.v.</button></div></div><div class="comment-row" id="comment-rep"><label>Bemerkung</label><input placeholder="Mangel / Defekt beschreiben..." oninput="autosave()"><div class="photo-bar"><div class="photo-thumbs" id="photos-rep"></div><label class="photo-add-btn"><input type="file" accept="image/*" onchange="handlePhoto(this,'rep')"><i class="ti ti-camera"></i><span>Foto</span></label></div></div>      </div>
+      <div class="card">
+        <div class="sec-hdr"><i class="ti ti-gauge"></i><span class="sec-title">Messwerte</span><button class="skip-btn" id="skip-messwerte" onclick="toggleSkip('messwerte')">entfällt</button></div>
+        <div id="body-messwerte">
+        <div class="measure-row"><div class="measure-label">Stromaufnahme<span>gemessener Istwert</span></div><input class="minput" id="f-stromaufnahme" placeholder="—" inputmode="decimal" oninput="autosave()"><span class="munit">A</span></div>
+        <div class="measure-row"><div class="measure-label">Strömungsgeschwindigkeit<span>gemessener Istwert</span></div><input class="minput" id="f-stroemgeschw" placeholder="—" inputmode="decimal" oninput="autosave()"><span class="munit">m/s</span></div>
+        <div class="measure-row"><div class="measure-label">Volumenstrom<span>gemessener Istwert</span></div><input class="minput" id="f-volumenstrom" placeholder="—" inputmode="decimal" oninput="autosave()"><span class="munit">m³/h</span></div>
+        <div class="full-input-row"><label>Prüfgerät</label><input id="f-pruefgeraet" placeholder="z.B. Testo 400" oninput="autosave()"></div>
+        </div>
+        <div id="skip-overlay-messwerte" class="skipped-overlay hidden">Messwerte: entfällt</div>
+      </div>
+    </div>
+    <div id="tab-abschluss" class="content hidden">
+      <div class="card">
+        <div class="sec-hdr"><i class="ti ti-checklist"></i><span class="sec-title">Ergebnisübersicht</span></div>
+        <div class="sum-grid">
+          <div class="sum-box"><div class="sum-num" style="color:var(--brand)" id="sum-ok">0</div><div class="sum-lbl">i.O.</div></div>
+          <div class="sum-box"><div class="sum-num" style="color:var(--red)" id="sum-warn">0</div><div class="sum-lbl">n.i.O.</div></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="sec-hdr"><i class="ti ti-notes"></i><span class="sec-title">Bemerkungen</span></div>
+        <div style="padding:10px 14px"><textarea id="f-bemerkungen" placeholder="Mängel, Maßnahmen, nächster Termin …" oninput="autosave()"></textarea></div>
+      </div>
+    </div>
+    <div id="tab-sig" class="content hidden">
+      <div class="card">
+        <div class="sec-hdr"><i class="ti ti-signature"></i><span class="sec-title">Bericht erstellt von</span></div>
+        <div class="cofields">
+          <div><label>Name in Druckbuchstaben</label><input id="f-erstelltVon" placeholder="Name Techniker" oninput="autosave()"></div>
+        </div>
+        <div class="sig-wrap">
+          <div class="sig-lrow"><span class="sig-name">Unterschrift</span>
+            <div style="display:flex;gap:6px">
+              <button class="sig-btn" onclick="clearSig()">✕ Löschen</button>
+              <button class="sig-btn done hidden" id="sig-done">✓ OK</button>
+            </div>
+          </div>
+          <canvas id="sig-canvas" class="sig-canvas" width="700" height="130"></canvas>
+          <div class="sig-hint" id="sig-hint">Mit Finger oder Apple Pencil unterschreiben</div>
+        </div>
+      </div>
+      <div class="card">
+        <div style="padding:11px 14px;display:flex;align-items:flex-start;gap:9px">
+          <i class="ti ti-info-circle" style="font-size:15px;color:var(--blue);margin-top:1px"></i>
+          <p style="font-size:12px;color:var(--tx2);line-height:1.5">PDF-Button → Drucken → Als PDF sichern.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="fbar">
+    <button class="btn-back" onclick="prevTab()">←</button>
+    <button class="btn-next" onclick="nextTab()" id="next-btn">Weiter →</button>
+    <button class="btn-pfoo" onclick="showPdf()">PDF ↗</button>
+  </div>
+</div>
+<div id="pov" class="pov hidden">
+  <div class="ptopbar">
+    <div><div class="ptopbar-title">PDF-Vorschau</div><div class="ptopbar-sub">Drucken → Als PDF sichern</div></div>
+    <div style="display:flex;gap:8px">
+      <button class="btn-print" onclick="doPrint()">🖨 Drucken / PDF</button>
+      <button class="btn-cpdf" onclick="closePdf()">✕</button>
+    </div>
+  </div>
+  <div style="padding:12px 14px"><div id="pdoc" class="pdoc"></div></div>
+</div>
+<div class="toast" id="toast">Gespeichert</div>
+<script>
+const LOGO_DATA="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyBpZD0iQVBMX0hDVSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB2ZXJzaW9uPSIxLjEiIHZpZXdCb3g9IjAgMCA3OTMuNyAxODQuMyI+CiAgPGRlZnM+CiAgICA8c3R5bGU+CiAgICAgIC5jbHMtMSB7CiAgICAgICAgZmlsbDogI2U3MzgzODsKICAgICAgfQoKICAgICAgLmNscy0xLCAuY2xzLTIgewogICAgICAgIHN0cm9rZS13aWR0aDogMHB4OwogICAgICB9CgogICAgICAuY2xzLTIgewogICAgICAgIGZpbGw6ICNmZmY7CiAgICAgIH0KICAgIDwvc3R5bGU+CiAgPC9kZWZzPgogIDxnPgogICAgPHBhdGggY2xhc3M9ImNscy0yIiBkPSJNMzU0LjMsMTcwLjhoLS4ybC0xMC45LTMwLjQtMTAuOSwzMC40aC0uMmwtMTUuOC00MS44aDQuN2wxMS4xLDMwLjUsMTEtMzAuNWguMmwxMSwzMC41LDExLjEtMzAuNWg0LjhsLTE1LjgsNDEuOFoiLz4KICAgIDxwYXRoIGNsYXNzPSJjbHMtMiIgZD0iTTQxNC40LDE0OS42YzAsMTIuMy04LjcsMjEuMy0yMC42LDIxLjNzLTIwLjUtOS0yMC41LTIxLjMsOC42LTIxLjMsMjAuNS0yMS4zLDIwLjYsOS4xLDIwLjYsMjEuM1pNMzc3LjYsMTQ5LjZjMCwxMCw2LjgsMTcuMywxNi4yLDE3LjNzMTYuMi03LjMsMTYuMi0xNy4zLTYuOC0xNy40LTE2LjItMTcuNC0xNi4yLDcuMy0xNi4yLDE3LjRaIi8+CiAgICA8cGF0aCBjbGFzcz0iY2xzLTIiIGQ9Ik00MjcuMSwxNjYuM2gyMC42djMuOWgtMjQuOXYtNDEuMmg0LjN2MzcuM1oiLz4KICAgIDxwYXRoIGNsYXNzPSJjbHMtMiIgZD0iTTQ3OC43LDEzMi45aC0xOS44djE1aDE2Ljl2My45aC0xNi45djE4LjNoLTQuM3YtNDEuMmgyNHY0WiIvPgogICAgPHBhdGggY2xhc3M9ImNscy0yIiBkPSJNNTA5LjgsMTMyLjloLTE5Ljh2MTVoMTYuOXYzLjloLTE2Ljl2MTguM2gtNC4zdi00MS4yaDI0djRaIi8+CiAgICA8cGF0aCBjbGFzcz0iY2xzLTIiIGQ9Ik01NDEuOCwxMzIuOWgtMjAuNnYxNC40aDE4LjJ2My45aC0xOC4ydjE1aDIxLjF2NGgtMjUuM3YtNDEuMmgyNC45djRaIi8+CiAgICA8cGF0aCBjbGFzcz0iY2xzLTIiIGQ9Ik01NzMuNywxNzAuMWwtMTAuMS0xNi4yYy0uNCwwLS44LDAtMS4yLDBoLTguMXYxNi4yaC00LjN2LTQxLjJoMTIuNGM4LjMsMCwxNC40LDQuNCwxNC40LDEyLjVzLTMuNSwxMC4xLTguOCwxMS43bDEwLjcsMTdoLTVaTTU3Mi41LDE0MS40YzAtNS43LTQuMS04LjctMTAuNS04LjdoLTcuOHYxNy4zaDcuOGM2LjQsMCwxMC41LTIuOSwxMC41LTguNloiLz4KICAgIDxwYXRoIGNsYXNzPSJjbHMtMiIgZD0iTTYxNS42LDEzMi44aC0xNXYzNy4zaC00LjN2LTM3LjNoLTE1di0zLjloMzQuMnYzLjlaIi8+CiAgICA8cGF0aCBjbGFzcz0iY2xzLTIiIGQ9Ik02NDYuOSwxMzIuN2wtMi4xLDMuNmMtMi45LTIuMy02LjgtNC4xLTExLjEtNC4xcy04LjgsMi4zLTguOCw3LjQsMi41LDUuOSw5LjksNy42YzkuNywyLjEsMTMuNiw1LjIsMTMuNiwxMS41cy01LjUsMTIuMi0xNC4yLDEyLjItMTAuOS0xLjktMTQuNi01LjJsMi40LTMuNWMzLDIuOSw3LjcsNC44LDEyLjMsNC44czkuOS0yLjcsOS45LTcuOS0zLjEtNi4zLTEwLjUtNy45Yy05LjctMi4xLTEyLjktNS4xLTEyLjktMTEuM3M1LjQtMTEuNiwxMy4xLTExLjYsOS45LDEuOSwxMy4yLDQuNFoiLz4KICA8L2c+CiAgPGc+CiAgICA8cGF0aCBjbGFzcz0iY2xzLTEiIGQ9Ik02NS43LDEyOWgtMTcuNXY0MS4xaDguM3YtMTIuN2g4LjNjOS45LDAsMTYuMy01LjYsMTYuMy0xNC4ycy02LTE0LjItMTUuNS0xNC4yTTY1LjEsMTUwLjNoLTguNnYtMTQuM2g4LjRjNS4xLDAsOC4yLDIuNyw4LjIsNy4xcy0zLjIsNy4yLTguMSw3LjJNODguNiwxNzBoMjkuNHYtNy41aC0yMXYtMzMuNmgtOC40djQxLjFaTTEyNS4yLDE3MGgzMS4zdi03LjVoLTIzdi05LjZoMTkuNXYtNy4zaC0xOS41di05LjRoMjIuN3YtNy40aC0zMXY0MS4xWk0xODQuMSwxNzAuOGMxMi4yLDAsMjEuNC05LjEsMjEuNC0yMS4zcy04LjktMjEuMy0yMS40LTIxLjMtMjEuNCw5LjEtMjEuNCwyMS4zLDguOSwyMS4zLDIxLjQsMjEuM00xODQuMSwxNjMuM2MtNy40LDAtMTMuMS02LTEzLjEtMTMuOXM1LjctMTMuOSwxMy4xLTEzLjksMTMuMSw2LDEzLjEsMTMuOS01LjYsMTMuOS0xMy4xLDEzLjkiLz4KICAgIDxwb2x5Z29uIGNsYXNzPSJjbHMtMSIgcG9pbnRzPSIyNDguMiAxNzAgMjQ5LjkgMTcwIDI0OS45IDEyOSAyNDEuNiAxMjkgMjQxLjYgMTUzLjMgMjE0LjUgMTI4LjcgMjEyLjcgMTI4LjcgMjEyLjcgMTcwIDIyMSAxNzAgMjIxIDE0NS42IDI0OC4yIDE3MCIvPgogICAgPHBhdGggY2xhc3M9ImNscy0xIiBkPSJNMjg4LjgsMTcwaDkuM2wtMjEtNDEuNGgtMS43bC0yMC44LDQxLjRoOS4ybDIuOS02LjNoMTkuMmwyLjksNi4zWk0yNzYuMSwxNDMuMWw2LjgsMTMuOGgtMTMuM2w2LjUtMTMuOFoiLz4KICAgIDxwYXRoIGNsYXNzPSJjbHMtMSIgZD0iTTM0LjIsMTcwaDkuM2wtMjEtNDEuNGgtMS43TDAsMTcwaDkuMmwyLjktNi4zaDE5LjJsMi45LDYuM1pNMjEuNiwxNDMuMWw2LjgsMTMuOGgtMTMuM2w2LjUtMTMuOFoiLz4KICA8L2c+CiAgPHBhdGggY2xhc3M9ImNscy0yIiBkPSJNMTAzLjIsODMuM1YxLjRoNi4xdjgxLjloLTYuMVoiLz4KICA8cGF0aCBjbGFzcz0iY2xzLTIiIGQ9Ik0xOTYuMyw4My4zbC0yNi4xLTMzLjloLTI2Ljh2MzMuOWgtNi4xVjEuNGgzNC40YzE3LjcsMCwyOS4zLDkuNiwyOS4zLDIzLjN2LjJjMCwxMy43LTEwLjIsMjEuNS0yNCwyMy40bDI3LDM1aC03LjdaTTE5NC45LDI0LjljMC0xMS04LjctMTcuOS0yMy41LTE3LjloLTI4djM2LjloMjcuNmMxMy43LDAsMjMuOS02LjksMjMuOS0xOC43di0uMloiLz4KICA8cGF0aCBjbGFzcz0iY2xzLTIiIGQ9Ik0yNjksN3YzMy42aDQ2LjN2NS42aC00Ni4zdjM3LjFoLTYuMVYxLjRoNTcuN3Y1LjZoLTUxLjZaIi8+CiAgPHBhdGggY2xhc3M9ImNscy0yIiBkPSJNMzc3LjcsODQuN2MtMjQuOCwwLTQxLjEtMTkuOC00MS4xLTQyLjF2LS4yQzMzNi42LDIwLDM1My4xLDAsMzc3LjksMHM0MS4xLDE5LjgsNDEuMSw0Mi4xcS4xLjEsMCwuMmMwLDIyLjMtMTYuNSw0Mi40LTQxLjMsNDIuNFpNNDEyLjcsNDIuNGMwLTIwLjItMTQuNy0zNi45LTM1LTM2LjlzLTM0LjgsMTYuNC0zNC44LDM2LjZ2LjJjMCwyMC4yLDE0LjcsMzYuOSwzNSwzNi45czM0LjgtMTYuNCwzNC44LTM2LjZ2LS4yWiIvPgogIDxwYXRoIGNsYXNzPSJjbHMtMiIgZD0iTTUwMS42LDgzLjNsLTI2LjEtMzMuOWgtMjYuOHYzMy45aC02LjFWMS40aDM0LjRjMTcuNywwLDI5LjMsOS42LDI5LjMsMjMuM3YuMmMwLDEzLjctMTAuMiwyMS41LTI0LDIzLjRsMjcsMzVoLTcuN1pNNTAwLjIsMjQuOWMwLTExLTguNy0xNy45LTIzLjUtMTcuOWgtMjh2MzYuOWgyNy42YzEzLjcsMCwyMy45LTYuOSwyMy45LTE4Ljd2LS4yWiIvPgogIDxwYXRoIGNsYXNzPSJjbHMtMiIgZD0iTTY2My41LDgzLjNWMS40aDYuMXY3Ni4zaDQ4LjF2NS42aC01NC4yWiIvPgogIDxwYXRoIGNsYXNzPSJjbHMtMiIgZD0iTTczOC44LDgzLjNWMS40aDYuMXY3Ni4zaDQ4LjF2NS42aC01NC4yWiIvPgogIDxwYXRoIGNsYXNzPSJjbHMtMiIgZD0iTTc1LjQsODMuNWwtMTEtMjIuOUgxNy40bC0xMS4xLDIyLjlIMEw0MC4xLDFoMS45bDQwLjEsODIuNWgtNi43Wk00MC45LDExLjNsLTIwLjksNDMuOGg0MS44TDQwLjksMTEuM1oiLz4KICA8cGF0aCBjbGFzcz0iY2xzLTIiIGQ9Ik02MzYuOSw4My41bC0xMS0yMi45aC00Ny4xbC0xMS4xLDIyLjloLTYuM0w2MDEuNSwxaDEuOWw0MC4xLDgyLjVoLTYuN1pNNjAyLjQsMTEuM2wtMjAuOSw0My44aDQxLjhsLTIwLjktNDMuOFoiLz4KPC9zdmc+";
+const TABS=['firma','kopf','pruefung','abschluss','sig'];
+const PRUEF_KEYS=['rohr','absch','vent','vbef','vlag','vmot','vschwing','filt','abk1','abk2','rsk','steu','schk','rep'];
+const PRUEF_LABELS={rohr:'Rohrleitungen',absch:'Abscheider',vent:'Ventilator',vbef:'Befestigungen',vlag:'Lager &amp; Geräusche',vmot:'E-Motor',vschwing:'Schwingungsdämpfer',filt:'Filterelemente',abk1:'Abluftklappe – Mechanismus &amp; Dichtheit',abk2:'Abluftklappe – Stellantrieb',rsk:'Rückschlagklappe',steu:'Steuerung / Regelung',schk:'Schaltschrank',rep:'Reparaturschalter'};
+let curIdx=0,state={},skipped={},sigData=null,photos={};
+function toggleSkip(key){
+  skipped[key]=!skipped[key];
+  document.getElementById('skip-'+key).classList.toggle('skipped',skipped[key]);
+  const body=document.getElementById('body-'+key);
+  if(body)body.style.cssText=skipped[key]?'opacity:.3;pointer-events:none':'';
+  document.getElementById('skip-overlay-'+key).classList.toggle('hidden',!skipped[key]);
+  autosave();
+}
+function showTab(name,el){
+  TABS.forEach(t=>document.getElementById('tab-'+t).classList.add('hidden'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.remove('hidden');
+  curIdx=TABS.indexOf(name);
+  (el||document.querySelectorAll('.tab')[curIdx]).classList.add('active');
+  document.getElementById('pfill').style.width=((curIdx+1)/TABS.length*100)+'%';
+  document.getElementById('next-btn').textContent=curIdx===TABS.length-1?'PDF erstellen →':'Weiter →';
+  updateSummary();
+  document.querySelectorAll('.tab')[curIdx].scrollIntoView({behavior:'smooth',inline:'center',block:'nearest'});
+}
+function nextTab(){if(curIdx<TABS.length-1){curIdx++;showTab(TABS[curIdx]);}else showPdf();}
+function prevTab(){if(curIdx>0){curIdx--;showTab(TABS[curIdx]);}}
+function setCheck(btn,dotId,key,status){
+  btn.closest('.check-row').querySelectorAll('.tog').forEach(t=>t.classList.remove('ok','warn','fail','nv'));
+  btn.classList.add(status);
+  const dot=document.getElementById(dotId);dot.classList.remove('ok','warn','fail');
+  if(status!=='nv')dot.classList.add(status);
+  state[key]=status;updateSummary();autosave();
+  const cr=document.getElementById('comment-'+key);
+  if(cr){if(status==='warn'||status==='fail'){cr.classList.add('vis');const inp=cr.querySelector('input');if(inp){inp.className=status==='fail'?'fb':'';}}else cr.classList.remove('vis');}
+}
+function updateSummary(){
+  let ok=0,warn=0;
+  Object.values(state).forEach(v=>{if(v==='ok')ok++;else if(v==='warn')warn++;});
+  const so=document.getElementById('sum-ok'),sw=document.getElementById('sum-warn');
+  if(so)so.textContent=ok;if(sw)sw.textContent=warn;
+}
+let _st;
+function autosave(){clearTimeout(_st);_st=setTimeout(()=>{const t=document.getElementById('toast');t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1200);},400);}
+function gv(id){const el=document.getElementById(id);return el?(el.value||''):'';}
+function badge(key){
+  const v=state[key];if(!v)return'<span class="ps nd">n.g.</span>';
+  if(v==='nv')return'<span class="ps skip">n.v.</span>';
+  if(v==='ok')return'<span class="ps ok">i.O.</span>';
+  if(v==='warn')return'<span class="ps fail">n.i.O.</span>';
+  return'<span class="ps nd">n.g.</span>';
+}
+const EXTRA_FIELD={vmot:'vmot-typ',abk2:'abk2-typ',steu:'steu-ort'};
+const EXTRA_LABEL={vmot:'Typ',abk2:'Typ',steu:'Ort'};
+function tr(key){
+  if(state[key]==='nv')return'';
+  const label=PRUEF_LABELS[key];
+  const b=badge(key);
+  const cr=document.getElementById('comment-'+key);
+  const comm=cr?cr.querySelector('input')?.value||'':'';
+  const commHtml=comm?'<br><em style="font-size:9px;color:#666">'+comm+'</em>':'';
+  const ef=EXTRA_FIELD[key]?gv(EXTRA_FIELD[key]):'';
+  const efHtml=ef?'<br><span style="font-size:9px;color:#555">'+EXTRA_LABEL[key]+': '+ef+'</span>':'';
+  const pl=photos[key]||[];
+  const pHtml=pl.length?'<div style="display:flex;flex-wrap:wrap;gap:3px;margin-top:3px">'+pl.map(s=>'<img src="'+s+'" style="width:70px;height:70px;object-fit:cover;border-radius:3px">').join('')+'</div>':'';
+  return'<tr><td>'+label+efHtml+commHtml+pHtml+'</td><td>'+b+'</td></tr>';
+}
+function handlePhoto(input,key){
+  if(!input.files||!input.files[0])return;
+  const reader=new FileReader();
+  reader.onload=e=>{const img=new Image();img.onload=()=>{
+    const MAX=900;let w=img.width,h=img.height;
+    if(w>h&&w>MAX){h=Math.round(h*MAX/w);w=MAX;}else if(h>MAX){w=Math.round(w*MAX/h);h=MAX;}
+    const c=document.createElement('canvas');c.width=w;c.height=h;
+    c.getContext('2d').drawImage(img,0,0,w,h);
+    const data=c.toDataURL('image/jpeg',.72);
+    if(!photos[key])photos[key]=[];photos[key].push(data);renderPhotos(key);autosave();
+  };img.src=e.target.result;};
+  reader.readAsDataURL(input.files[0]);input.value='';
+}
+function renderPhotos(key){
+  const area=document.getElementById('photos-'+key);if(!area)return;area.innerHTML='';
+  (photos[key]||[]).forEach((src,i)=>{
+    const w=document.createElement('div');w.className='pthumb-wrap';
+    const im=document.createElement('img');im.className='pthumb';im.src=src;im.onclick=()=>openLightbox(key,i);
+    const d=document.createElement('button');d.className='pdel';d.textContent='✕';
+    d.onclick=()=>{photos[key].splice(i,1);renderPhotos(key);autosave();};
+    w.appendChild(im);w.appendChild(d);area.appendChild(w);
+  });
+}
+function openLightbox(key,idx){
+  const src=(photos[key]||[])[idx];if(!src)return;
+  const lb=document.createElement('div');lb.className='lightbox';
+  const im=document.createElement('img');im.src=src;
+  const btn=document.createElement('button');btn.className='lightbox-close';btn.textContent='✕';
+  btn.onclick=()=>lb.remove();lb.appendChild(im);lb.appendChild(btn);
+  lb.onclick=e=>{if(e.target===lb)lb.remove();};document.body.appendChild(lb);
+}
+let anlagenfotoData=null;
+function handleAnlagenfoto(input){
+  if(!input.files||!input.files[0])return;
+  const reader=new FileReader();
+  reader.onload=e=>{const img=new Image();img.onload=()=>{
+    const MAX=900;let w=img.width,h=img.height;
+    if(w>h&&w>MAX){h=Math.round(h*MAX/w);w=MAX;}else if(h>MAX){w=Math.round(w*MAX/h);h=MAX;}
+    const c=document.createElement('canvas');c.width=w;c.height=h;
+    c.getContext('2d').drawImage(img,0,0,w,h);
+    anlagenfotoData=c.toDataURL('image/jpeg',.8);
+    document.getElementById('anlagenfoto-img').src=anlagenfotoData;
+    document.getElementById('anlagenfoto-preview').classList.remove('hidden');
+    document.getElementById('anlagenfoto-addbtn').classList.add('hidden');
+    autosave();
+  };img.src=e.target.result;};
+  reader.readAsDataURL(input.files[0]);input.value='';
+}
+function removeAnlagenfoto(){
+  anlagenfotoData=null;
+  document.getElementById('anlagenfoto-preview').classList.add('hidden');
+  document.getElementById('anlagenfoto-addbtn').classList.remove('hidden');
+  autosave();
+}
+const TPL_FIELDS=["f-anlage","f-hersteller","f-typbez","f-geraeteart","f-spannung","bh-name","bh-street","bh-city","obj-name","obj-street","obj-city","f-standort","f-intervall","tech1","tech2","tech3","tech4","f-pruefgeraet","abk2-typ","vmot-typ","steu-ort"];
+const TPL_SKIPS=["messwerte"];
+function saveTemplate(){
+  const d={_v:1,_t:'Abluft-Vorlage'};
+  TPL_FIELDS.forEach(id=>{const el=document.getElementById(id);if(el)d[id]=el.value||'';});
+  TPL_SKIPS.forEach(k=>{d['skip_'+k]=skipped[k]||false;});
+  const nr=(d['f-anlage']||'Anlage').replace(/[^a-zA-Z0-9_-]/g,'_');
+  const blob=new Blob([JSON.stringify(d,null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='Abluft_Vorlage_'+nr+'.json';a.click();URL.revokeObjectURL(a.href);
+  showTplStatus('✓ Anlagendaten gespeichert.');
+}
+function loadTemplate(input){
+  if(!input.files||!input.files[0])return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    try{
+      const d=JSON.parse(e.target.result);if(d._t!=='Abluft-Vorlage')throw new Error('Falsche Datei');
+      TPL_FIELDS.forEach(id=>{const el=document.getElementById(id);if(el&&d[id]!==undefined)el.value=d[id];});
+      TPL_SKIPS.forEach(k=>{const want=d['skip_'+k]||false;if(want!==!!skipped[k])toggleSkip(k);});
+      const nd=new Date();document.getElementById('f-datum').value=nd.toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit',year:'numeric'});
+      autosave();showTplStatus('✓ Geladen – Datum auf heute gesetzt.');showTab('kopf');
+    }catch(err){alert('Fehler: '+err.message);}
+  };reader.readAsText(input.files[0]);input.value='';
+}
+function showTplStatus(msg){const el=document.getElementById('tplStatus');el.textContent=msg;el.style.display='block';setTimeout(()=>el.style.display='none',5000);}
+function showPdf(){
+  const datum=gv('f-datum');
+  const bh=[gv('bh-name'),gv('bh-street'),gv('bh-city')].filter(Boolean).join('<br>')||'—';
+  const obj=[gv('obj-name'),gv('obj-street'),gv('obj-city'),gv('f-standort')?'Standort: '+gv('f-standort'):''].filter(Boolean).join('<br>')||'—';
+  const techs=[gv('tech1'),gv('tech2'),gv('tech3'),gv('tech4')].filter(Boolean).join(', ')||'—';
+  const rows=PRUEF_KEYS.map(k=>tr(k)).join('');
+  let ok=0,warn=0;Object.values(state).forEach(v=>{if(v==='ok')ok++;else if(v==='warn')warn++;});
+  const mw=[
+    gv('f-stromaufnahme')?gv('f-stromaufnahme')+' A':'',
+    gv('f-stroemgeschw')?gv('f-stroemgeschw')+' m/s':'',
+    gv('f-volumenstrom')?gv('f-volumenstrom')+' m³/h':''
+  ];
+  document.getElementById('pdoc').innerHTML=
+    '<div class="pco-hdr"><img class="pco-logo" src="'+LOGO_DATA+'" alt="Logo"><div class="pco-right"><div class="pdoc-title">Wartungsprotokoll</div><div class="pnorm">ortsfeste Absauganlage · '+datum+'</div><div class="pco-info">Benzstr. 1 · 70839 Gerlingen<br>Tel. 07156 17809-287 · info.airforall@apleona.com</div></div></div>'+
+    '<div class="pbody">'+
+    (anlagenfotoData?'<div style="display:flex;gap:8px;margin-bottom:8px;align-items:flex-start"><img src="'+anlagenfotoData+'" style="width:80px;height:80px;object-fit:cover;border-radius:4px;border:.5px solid #ddd;flex-shrink:0"><div style="flex:1"><div class="pparties" style="margin-bottom:0">'+'<div class="pparty"><div class="pparty-title">Betreiber</div><div class="pparty-val">'+bh+'</div></div><div class="pparty"><div class="pparty-title">Objekt / Anlage</div><div class="pparty-val">'+obj+'</div></div></div></div></div>':'<div class="pparties"><div class="pparty"><div class="pparty-title">Betreiber</div><div class="pparty-val">'+bh+'</div></div><div class="pparty"><div class="pparty-title">Objekt / Anlage</div><div class="pparty-val">'+obj+'</div></div></div>')+
+    '<div class="pmeta"><div class="pbox"><div class="pbox-k">Anlage</div><div class="pbox-v">'+(gv('f-anlage')||'—')+'</div></div><div class="pbox"><div class="pbox-k">Datum</div><div class="pbox-v">'+(datum||'—')+'</div></div><div class="pbox"><div class="pbox-k">Auftrags-Nr.</div><div class="pbox-v">'+(gv('f-auftragsNr')||'—')+'</div></div><div class="pbox"><div class="pbox-k">Ansprechperson</div><div class="pbox-v">'+(gv('f-ansprechperson')||'—')+'</div></div><div class="pbox"><div class="pbox-k">Service-Techniker</div><div class="pbox-v" style="font-size:10px">'+techs+'</div></div></div>'+
+    '<div class="psec">Geräte- / Typdaten</div>'+
+    '<div class="pmeta"><div class="pbox"><div class="pbox-k">Hersteller</div><div class="pbox-v">'+(gv('f-hersteller')||'—')+'</div></div><div class="pbox"><div class="pbox-k">Typenbezeichnung</div><div class="pbox-v">'+(gv('f-typbez')||'—')+'</div></div><div class="pbox"><div class="pbox-k">Geräteart</div><div class="pbox-v">'+(gv('f-geraeteart')||'—')+'</div></div><div class="pbox"><div class="pbox-k">Strom</div><div class="pbox-v">'+(gv('f-strom')?gv('f-strom')+' A':'—')+'</div></div><div class="pbox"><div class="pbox-k">Spannung/Frequenz</div><div class="pbox-v">'+(gv('f-spannung')||'—')+'</div></div><div class="pbox"><div class="pbox-k">Leistung</div><div class="pbox-v">'+(gv('f-leistung')?gv('f-leistung')+' kW':'—')+'</div></div></div>'+
+    '<div class="psec">Prüfpunkte</div><table class="ptbl"><thead><tr><th>Prüfpunkt</th><th>Ergebnis</th></tr></thead><tbody>'+rows+'</tbody></table>'+
+    (skipped['messwerte']?'':'<div class="psec">Messwerte</div><div class="pmeta"><div class="pbox"><div class="pbox-k">Stromaufnahme</div><div class="pbox-v">'+(mw[0]||'—')+'</div></div><div class="pbox"><div class="pbox-k">Strömungsgeschwindigkeit</div><div class="pbox-v">'+(mw[1]||'—')+'</div></div><div class="pbox"><div class="pbox-k">Volumenstrom</div><div class="pbox-v">'+(mw[2]||'—')+'</div></div><div class="pbox"><div class="pbox-k">Prüfgerät</div><div class="pbox-v">'+(gv('f-pruefgeraet')||'—')+'</div></div></div>')+
+    '<div class="psec">Bemerkungen</div><div style="background:#f9f9f9;border-radius:4px;padding:8px;min-height:32px;font-size:10px;color:#444;border:.5px solid #eee">'+(gv('f-bemerkungen')||'Keine Bemerkungen')+'</div>'+
+    '<div class="psec">Ergebnis</div><div class="pres"><div class="pres-box" style="background:#E6EAF3"><div class="pres-num" style="color:#002060">'+ok+'</div><div class="pres-lbl" style="color:#002060">i.O.</div></div><div class="pres-box" style="background:#FCEBEB"><div class="pres-num" style="color:#A32D2D">'+warn+'</div><div class="pres-lbl" style="color:#A32D2D">n.i.O.</div></div></div>'+
+    '<div class="psec">Bericht erstellt von</div><div class="psig-box"><div class="psig-title">'+(gv('f-erstelltVon')||'—')+'</div>'+(sigData?'<img src="'+sigData+'" style="width:100%;height:60px;object-fit:contain">':'<div style="height:60px;display:flex;align-items:center;justify-content:center;font-size:10px;color:#ccc">Keine Unterschrift</div>')+'</div>'+
+    '<div class="pfoot"><span>Air for All GmbH · Wartungsprotokoll Ablüfter</span><span>Erstellt: '+new Date().toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit',year:'numeric'})+'</span></div>'+
+    '</div>';
+  document.getElementById('pov').classList.remove('hidden');
+}
+function closePdf(){document.getElementById('pov').classList.add('hidden');}
+function doPrint(){
+  showPdf();
+  const anlage=(gv('f-anlage')||'').replace(/[^a-zA-Z0-9_-]/g,'-');
+  const auftrag=(gv('f-auftragsNr')||'').replace(/[^a-zA-Z0-9_-]/g,'-');
+  const datumRaw=gv('f-datum')||'';
+  const dp=datumRaw.split('.');
+  const datumKurz=dp.length===3?dp[1]+'_'+dp[2].slice(-2):datumRaw.replace(/[.]/g,'');
+  const docName=['Wartungsprotokoll',anlage,auftrag,datumKurz].filter(Boolean).join('_');
+  const c=document.getElementById('pdoc').innerHTML;
+  const w=window.open('','_blank');
+  if(!w){alert('Bitte Popups für diese Seite erlauben.');return;}
+  w.document.write('<!DOCTYPE html><html><head><meta charset="utf-8"><title>'+docName+'</title><style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:Arial,sans-serif;font-size:8.5px;color:#222;line-height:1.3}.pco-hdr{display:flex;justify-content:space-between;align-items:center;background:#002060;padding:7px 11px;-webkit-print-color-adjust:exact;print-color-adjust:exact}.pco-logo{height:40px;max-width:160px;object-fit:contain}.pco-right{text-align:right}.pdoc-title{font-size:11px;font-weight:700;color:#fff;margin-bottom:1px}.pnorm{font-size:7.5px;color:rgba(255,255,255,.75)}.pco-info{font-size:7.5px;color:rgba(255,255,255,.85);line-height:1.5;margin-top:2px}.pbody{padding:6px 11px}.pparties{display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-bottom:5px}.pparty{background:#f5f5f5;border-radius:3px;padding:3px 5px}.pparty-title{font-size:6.5px;color:#666;text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px}.pparty-val{font-size:9px;font-weight:700;color:#000;line-height:1.4}.pmeta{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin-bottom:5px}.pbox{background:#f5f5f5;border-radius:3px;padding:3px 5px}.pbox-k{font-size:6.5px;color:#666;text-transform:uppercase;letter-spacing:.05em;margin-bottom:1px}.pbox-v{font-size:8.5px;font-weight:600}.psec{font-size:7.5px;font-weight:700;color:#002060;text-transform:uppercase;letter-spacing:.06em;margin:5px 0 2px;border-bottom:.5px solid #ccc;padding-bottom:2px}.ptbl{width:100%;border-collapse:collapse;font-size:7.5px}.ptbl th{background:#EEF1F8;color:#002060;padding:2px 4px;text-align:left;font-size:6.5px;text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid #ddd;-webkit-print-color-adjust:exact;print-color-adjust:exact}.ptbl th:last-child{width:55px;text-align:center}.ptbl td{padding:2px 4px;border-bottom:.5px solid #eee;vertical-align:top}.ptbl td:last-child{width:55px;text-align:center;white-space:nowrap;vertical-align:middle}.ps{display:inline-block;padding:1px 4px;border-radius:8px;font-size:6.5px;font-weight:700}.ps.ok{background:#E6EAF3;color:#002060}.ps.warn{background:#FAEEDA;color:#854F0B}.ps.fail{background:#FCEBEB;color:#A32D2D}.ps.nd{background:#f0f0f0;color:#555}.ps.skip{background:#eee;color:#777}.pres{display:flex;gap:5px;margin-bottom:5px}.pres-box{flex:1;border-radius:3px;padding:3px;text-align:center;-webkit-print-color-adjust:exact;print-color-adjust:exact}.pres-num{font-size:12px;font-weight:700}.pres-lbl{font-size:6.5px}.psig-box{border:.5px solid #ddd;border-radius:3px;padding:5px;margin-top:5px}.psig-title{font-size:6.5px;color:#666;text-transform:uppercase;letter-spacing:.04em;margin-bottom:3px}.pfoot{margin-top:5px;border-top:.5px solid #eee;padding-top:3px;font-size:6.5px;color:#555;display:flex;justify-content:space-between}@media print{@page{margin:10mm;size:A4}a[href]:after{content:none!important}}</style></head><body>'+c+'</body></html>');
+  w.document.close();
+  setTimeout(()=>{w.focus();w.print();},500);
+}
+(function(){
+  const c=document.getElementById('sig-canvas'),ctx=c.getContext('2d');let drawing=false,lx=0,ly=0;
+  function pos(e){const r=c.getBoundingClientRect(),sx=c.width/r.width,sy=c.height/r.height;return e.touches?{x:(e.touches[0].clientX-r.left)*sx,y:(e.touches[0].clientY-r.top)*sy}:{x:(e.clientX-r.left)*sx,y:(e.clientY-r.top)*sy};}
+  function start(e){e.preventDefault();drawing=true;const p=pos(e);lx=p.x;ly=p.y;ctx.beginPath();ctx.arc(lx,ly,1.5,0,Math.PI*2);ctx.fillStyle='#1a1a1a';ctx.fill();}
+  function move(e){e.preventDefault();if(!drawing)return;const p=pos(e);ctx.beginPath();ctx.moveTo(lx,ly);ctx.lineTo(p.x,p.y);ctx.strokeStyle='#1a1a1a';ctx.lineWidth=2.5;ctx.lineCap='round';ctx.lineJoin='round';ctx.stroke();lx=p.x;ly=p.y;}
+  function end(e){e.preventDefault();if(!drawing)return;drawing=false;sigData=c.toDataURL('image/png');c.classList.add('signed');document.getElementById('sig-done').classList.remove('hidden');document.getElementById('sig-hint').textContent='✓ Gespeichert';autosave();}
+  c.addEventListener('mousedown',start);c.addEventListener('mousemove',move);c.addEventListener('mouseup',end);c.addEventListener('mouseleave',end);
+  c.addEventListener('touchstart',start,{passive:false});c.addEventListener('touchmove',move,{passive:false});c.addEventListener('touchend',end,{passive:false});
+})();
+function clearSig(){const c=document.getElementById('sig-canvas');c.getContext('2d').clearRect(0,0,c.width,c.height);c.classList.remove('signed');sigData=null;document.getElementById('sig-done').classList.add('hidden');document.getElementById('sig-hint').textContent='Mit Finger oder Apple Pencil unterschreiben';}
+if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
+window.addEventListener('load',()=>{
+  const s=document.getElementById('splash');if(s)setTimeout(()=>{s.style.opacity='0';setTimeout(()=>s.remove(),500);},700);
+  const nd=new Date();const today=nd.toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit',year:'numeric'});
+  document.getElementById('f-datum').value=today;
+});
+</script>
+</body>
+</html>
